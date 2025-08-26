@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package post;
+option go_package = ".";
+
+service PostService{
+  rpc CreateTopic(CreateTopicRequest) returns (CreatedResponse);
+
+  rpc GetAllTopicsAdmin(GetManyRequest) returns (TopicsAdminResponse);
+
+  rpc UpdateTopic(UpdateTopicRequest) returns (UpdatedResponse);
+
+  rpc DeleteTopic(DeleteOneRequest) returns (DeletedResponse);
+
+  rpc DeleteTopics(DeleteManyRequest) returns (DeletedResponse);
+
+  rpc PermanentlyDeleteTopic(PermanentlyDeleteOneRequest) returns (DeletedResponse);
+
+  rpc PermanentlyDeleteTopics(PermanentlyDeleteManyRequest) returns (DeletedResponse);
+
+  rpc RestoreTopic(RestoreOneRequest) returns (RestoredResponse);
+
+  rpc RestoreTopics(RestoreManyRequest) returns (RestoredResponse);
+
+  rpc CreatePost(CreatePostRequest) returns (CreatedResponse);
+
+  rpc GetDeletedTopics(GetManyRequest) returns (TopicsAdminResponse);
+}
+
+message CreatePostRequest {
+  string title = 1;
+  string content = 2;
+  bool is_published = 3;
+  string topic_id = 4;
+  repeated CreateImageRequest images = 5;
+  string user_id = 6;
+}
+
+message CreateImageRequest {
+  string base64_data = 1;
+  string file_name = 2;
+  bool is_thumbnail = 3;
+  int32 sort_order = 4;
+}
+
+message RestoreManyRequest {
+  repeated string ids = 1;
+  string user_id = 2;
+}
+
+message RestoredResponse {
+  bool success = 1;
+}
+
+message RestoreOneRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message PermanentlyDeleteManyRequest {
+  repeated string ids = 1;
+}
+
+message PermanentlyDeleteOneRequest {
+  string id = 1;
+}
+
+message DeleteManyRequest {
+  repeated string ids = 1;
+  string user_id = 2;
+}
+
+message DeleteOneRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message DeletedResponse {
+  bool success = 1;
+}
+
+message UpdatedResponse {
+  bool success = 1;
+}
+
+message UpdateTopicRequest {
+  string id = 1;
+  string name = 2;
+  string slug = 3;
+  string user_id = 4;
+}
+
+message TopicsAdminResponse {
+  repeated TopicAdminResponse topics = 1;
+}
+
+message TopicAdminResponse {
+  string id = 1;
+  string name = 2;
+  string slug = 3;
+  string created_at = 4;
+  string updated_at = 5;
+  BaseUserResponse created_by = 6;
+  BaseUserResponse updated_by = 7;
+}
+
+message BaseUserResponse {
+  string id = 1;
+  string username = 2;
+  BaseProfileResponse profile = 3;
+}
+
+message BaseProfileResponse {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+}
+
+message GetManyRequest {}
+
+message CreateTopicRequest {
+  string name = 1;
+  optional string slug = 2;
+  string user_id = 3;
+}
+
+message CreatedResponse {
+  string id = 1;
+}

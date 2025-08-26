@@ -1,0 +1,192 @@
+syntax = "proto3";
+
+package user;
+option go_package = ".";
+
+service UserService {
+  rpc CheckEmailExists(CheckEmailExistsRequest) returns (CheckedResponse);
+
+  rpc CheckUsernameExists(CheckUsernameExistsRequest) returns (CheckedResponse);
+
+  rpc GetUserPublicById(GetUserByIdRequest) returns (UserPublicResponse);
+
+  rpc GetUserById(GetUserByIdRequest) returns (UserResponse);
+
+  rpc GetUserPublicByEmail(GetUserByEmailRequest) returns (UserPublicResponse);
+
+  rpc GetUserByUsername(GetUserByUsernameRequest) returns (UserResponse);
+
+  rpc CreateUser(CreateUserRequest) returns (UserPublicResponse);
+
+  rpc UpdateUserPassword(UpdateUserPasswordRequest) returns (UpdatedResponse);
+
+  rpc UpdateProfile(UpdateProfileRequest) returns (UserPublicResponse);
+
+  rpc UpdateMeasurement(UpdateMeasurementRequest) returns (MeasurementResponse);
+
+  rpc GetMeasurementByUserId(GetMeasurementByUserIdRequest) returns (MeasurementResponse);
+
+  rpc GetAddressesByUserId(GetAddressesByUserIdRequest) returns (AddressesResponse);
+
+  rpc CreateAddress(CreateAddressRequest) returns (AddressResponse);
+
+  rpc UpdateAddress(UpdateAddressRequest) returns (AddressResponse);
+
+  rpc DeleteAddress(DeleteAddressRequest) returns (AddressDeletedResponse);
+
+  rpc GetUsersById(GetUsersByIdRequest) returns (UsersPublicResponse);
+}
+
+message UsersPublicResponse {
+  repeated UserPublicResponse users = 1;
+}
+
+message GetUsersByIdRequest {
+  repeated string ids = 1;
+}
+
+message AddressDeletedResponse {
+  bool success = 1;
+}
+
+message DeleteAddressRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message AddressesResponse {
+  repeated AddressResponse addresses = 1;
+}
+
+message AddressResponse {
+  string id = 1; 
+  string full_name = 2;
+  string phone_number = 3;
+  string street = 4;
+  string ward = 5;
+  string province = 6;
+  optional bool is_default = 7;
+}
+
+message CreateAddressRequest {
+  string full_name = 1;
+	string phone_number = 2; 
+	string street = 3;      
+	string ward = 4;        
+	string province = 5;    
+	bool is_default = 6;  
+  string user_id = 7;
+}
+
+message UpdateAddressRequest {
+  string id = 1;
+  string full_name = 2;
+	string phone_number = 3; 
+	string street = 4;      
+	string ward = 5;        
+	string province = 6;    
+	bool is_default = 7;  
+  string user_id = 8;
+}
+
+message GetAddressesByUserIdRequest {
+  string user_id = 1;
+}
+
+message MeasurementResponse {
+  string id = 1;
+  int32 height = 2;
+  int32 weight = 3;
+  int32 chest = 4;
+  int32 waist = 5;
+  int32 butt = 6;
+}
+
+message GetMeasurementByUserIdRequest {
+  string user_id = 1;
+}
+
+message UpdateMeasurementRequest {
+  string id = 1;
+  int32 height = 2;
+  int32 weight = 3;
+  int32 chest = 4;
+  int32 waist = 5;
+  int32 butt = 6;
+  string user_id = 7;
+}
+
+message GetUserByEmailRequest {
+  string email = 1;
+}
+
+message UpdateProfileRequest {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string gender = 4;
+  string dob = 5;
+  string user_id = 6;
+}
+
+message UpdatedResponse {
+  bool success = 1;
+}
+
+message UpdateUserPasswordRequest {
+  string id = 1;
+  string new_password = 2;
+}
+
+message CheckEmailExistsRequest {
+  string email = 1;
+}
+
+message CheckUsernameExistsRequest {
+  string username = 1;
+}
+
+message CheckedResponse {
+  bool exists = 1;
+}
+
+message UserResponse {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  repeated string roles = 4;
+  string password = 5;
+  string created_at = 6;
+  ProfileResponse profile = 7;
+}
+
+message ProfileResponse {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string gender = 4;
+  string dob = 5;
+}
+
+message UserPublicResponse {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  repeated string roles = 4;
+  string created_at = 5;
+  ProfileResponse profile = 6;
+}
+
+message GetUserByIdRequest {
+  string id = 1;
+}
+
+message GetUserByUsernameRequest {
+  string username = 1;
+}
+
+message CreateUserRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}

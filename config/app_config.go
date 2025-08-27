@@ -5,7 +5,7 @@ import "github.com/spf13/viper"
 type AppConfig struct {
 	App struct {
 		ServerHost string `mapstructure:"server_host"`
-		GRPCPort   int    `mapstructure:"grpc_port"`
+		HttpPort   int    `mapstructure:"http_port"`
 	} `mapstructure:"app"`
 
 	Jwt struct {

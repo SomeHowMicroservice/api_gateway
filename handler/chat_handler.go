@@ -23,7 +23,7 @@ func (h *ChatHandler) TestConnect(c *gin.Context) {
 	defer cancel()
 
 	if _, err := h.chatClient.SendMessage(ctx, &chatpb.SendMessageRequest{
-		Message: "Lồn",
+		Message: "Hello World!!!",
 	}); err != nil {
 		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
 		return

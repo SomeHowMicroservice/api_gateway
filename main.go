@@ -61,5 +61,5 @@ func main() {
 	router.PostRouter(api, cfg, clients.UserClient, appContainer.Post.Handler)
 	router.ChatRouter(api, cfg, clients.UserClient, appContainer.Chat.Handler)
 
-	r.Run(fmt.Sprintf(":%d", cfg.App.GRPCPort))
+	r.Run(fmt.Sprintf(":%d", cfg.App.HttpPort))
 }

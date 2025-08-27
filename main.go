@@ -13,11 +13,11 @@ import (
 )
 
 var (
-	authAddr = "localhost:8081"
-	userAddr = "localhost:8082"
+	authAddr    = "localhost:8081"
+	userAddr    = "localhost:8082"
 	productAddr = "localhost:8083"
-	postAddr = "localhost:8084"
-	chatAddr = "localhost:8085"
+	postAddr    = "localhost:8084"
+	chatAddr    = "localhost:8085"
 )
 
 func main() {
@@ -26,19 +26,19 @@ func main() {
 		log.Fatalf("Tải cấu hình Gateway thất bại: %v", err)
 	}
 
-	authAddr = cfg.App.ServerHost + fmt.Sprintf(":%d", cfg.Services.AuthPort)
-	userAddr = cfg.App.ServerHost + fmt.Sprintf(":%d", cfg.Services.UserPort)
-	productAddr = cfg.App.ServerHost + fmt.Sprintf(":%d", cfg.Services.ProductPort)
-	postAddr = cfg.App.ServerHost + fmt.Sprintf(":%d", cfg.Services.PostPort)
-	chatAddr = cfg.App.ServerHost + fmt.Sprintf(":%d", cfg.Services.ChatPort)
+	authAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.AuthPort)
+	userAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.UserPort)
+	productAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.ProductPort)
+	postAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.PostPort)
+	chatAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.ChatPort)
+	
 	ca := &common.ClientAddresses{
-		AuthAddr: authAddr, 
-		UserAddr: userAddr, 
-		ProductAddr: productAddr, 
-		PostAddr: postAddr,
-		ChatAddr: chatAddr,
+		AuthAddr:    authAddr,
+		UserAddr:    userAddr,
+		ProductAddr: productAddr,
+		PostAddr:    postAddr,
+		ChatAddr:    chatAddr,
 	}
-
 	clients, err := initialization.InitClients(ca)
 	if err != nil {
 		log.Fatalf("Kết nối tới các dịch vụ khác thất bại: %v", err)
@@ -51,7 +51,7 @@ func main() {
 	if err = r.SetTrustedProxies([]string{"127.0.0.1"}); err != nil {
 		log.Fatalf("Thiết lập Proxy thất bại: %v", err)
 	}
-	
+
 	config.CORSConfig(r)
 
 	api := r.Group("/api/v1")

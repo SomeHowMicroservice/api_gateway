@@ -1,7 +1,6 @@
 package initialization
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -13,6 +12,7 @@ import (
 	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/keepalive"
 )
 
 type GRPCClients struct {
@@ -29,34 +29,32 @@ type GRPCClients struct {
 }
 
 func InitClients(ca *common.ClientAddresses) (*GRPCClients, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-
-	authConn, err := grpc.DialContext(ctx, ca.AuthAddr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	opts := dialOptions()
+	authConn, err := grpc.NewClient(ca.AuthAddr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("không thể kết nối tới Auth Service: %w", err)
 	}
 	authClient := authpb.NewAuthServiceClient(authConn)
 
-	userConn, err := grpc.DialContext(ctx, ca.UserAddr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	userConn, err := grpc.NewClient(ca.UserAddr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("không thể kết nối tới Usẻ Service: %w", err)
 	}
 	userClient := userpb.NewUserServiceClient(userConn)
 
-	productConn, err := grpc.DialContext(ctx, ca.ProductAddr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	productConn, err := grpc.NewClient(ca.ProductAddr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("không thể kết nối tới Product Service: %w", err)
 	}
 	productClient := productpb.NewProductServiceClient(productConn)
 
-	postConn, err := grpc.DialContext(ctx, ca.PostAddr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	postConn, err := grpc.NewClient(ca.PostAddr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("không thể kết nối tới Post Service: %w", err)
 	}
 	postClient := postpb.NewPostServiceClient(postConn)
 
-	chatConn, err := grpc.DialContext(ctx, ca.ChatAddr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	chatConn, err := grpc.NewClient(ca.ChatAddr, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("không thể kết nối tới Chat Service: %w", err)
 	}
@@ -82,4 +80,27 @@ func (g *GRPCClients) Close() {
 	_ = g.productConn.Close()
 	_ = g.postConn.Close()
 	_ = g.chatConn.Close()
+}
+
+func dialOptions() []grpc.DialOption {
+	return []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultServiceConfig(`{
+			"methodConfig": [{
+				"name": [{}],
+				"retryPolicy": {
+					"MaxAttempts": 4,
+					"InitialBackoff": "0.1s",
+					"MaxBackoff": "1s", 
+					"BackoffMultiplier": 2.0,
+					"RetryableStatusCodes": ["UNAVAILABLE", "DEADLINE_EXCEEDED"]
+				}
+			}]
+		}`),
+		grpc.WithKeepaliveParams(keepalive.ClientParameters{
+			Time:                5 * time.Minute,
+			Timeout:             10 * time.Second,
+			PermitWithoutStream: true,
+		}),
+	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/SomeHowMicroservice/shm-be/gateway/common"
 	"github.com/SomeHowMicroservice/shm-be/gateway/config"
@@ -22,7 +23,7 @@ var (
 func main() {
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		panic(fmt.Errorf("tải cấu hình Gateway thất bại: %w", err))
+		log.Fatalf("Tải cấu hình Gateway thất bại: %v", err)
 	}
 
 	authAddr = cfg.App.ServerHost + fmt.Sprintf(":%d", cfg.Services.AuthPort)
@@ -38,10 +39,19 @@ func main() {
 		ChatAddr: chatAddr,
 	}
 
-	clients := initialization.InitClients(ca)
+	clients, err := initialization.InitClients(ca)
+	if err != nil {
+		log.Fatalf("Kết nối tới các dịch vụ khác thất bại: %v", err)
+	}
+	defer clients.Close()
+
 	appContainer := container.NewContainer(clients, cfg)
 
 	r := gin.Default()
+	if err = r.SetTrustedProxies([]string{"127.0.0.1"}); err != nil {
+		log.Fatalf("Thiết lập Proxy thất bại: %v", err)
+	}
+	
 	config.CORSConfig(r)
 
 	api := r.Group("/api/v1")

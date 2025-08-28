@@ -25,6 +25,18 @@ service PostService{
   rpc CreatePost(CreatePostRequest) returns (CreatedResponse);
 
   rpc GetDeletedTopics(GetManyRequest) returns (TopicsAdminResponse);
+
+  rpc GetAllTopics(GetManyRequest) returns (TopicsResponse);
+}
+
+message TopicResponse {
+  string id = 1;
+  string name = 2;
+  string slug = 3;
+}
+
+message TopicsResponse {
+  repeated TopicResponse topics = 1;
 }
 
 message CreatePostRequest {

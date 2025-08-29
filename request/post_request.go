@@ -11,7 +11,7 @@ type UpdateTopic struct {
 }
 
 type CreatePostRequest struct {
-	Title       string `json:"title" binding:"required,min=2"`
+	Title       string `json:"title" binding:"required,min=1"`
 	Content     string `json:"content" binding:"required,min=1"`
 	IsPublished *bool  `json:"is_published" binding:"required"`
 	TopicID     string `json:"topic_id" binding:"required,uuid4"`

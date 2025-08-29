@@ -76,7 +76,7 @@ func (h *PostHandler) GetAllTopicsAdmin(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.postClient.GetAllTopicsAdmin(ctx, &postpb.GetManyRequest{})
+	res, err := h.postClient.GetAllTopicsAdmin(ctx, &postpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {
@@ -98,7 +98,7 @@ func (h *PostHandler) GetAllTopics(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.postClient.GetAllTopics(ctx, &postpb.GetManyRequest{})
+	res, err := h.postClient.GetAllTopics(ctx, &postpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
@@ -115,7 +115,7 @@ func (h *PostHandler) GetDeletedTopics(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.postClient.GetDeletedTopics(ctx, &postpb.GetManyRequest{})
+	res, err := h.postClient.GetDeletedTopics(ctx, &postpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {

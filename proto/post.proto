@@ -44,16 +44,24 @@ message CreatePostRequest {
   string content = 2;
   bool is_published = 3;
   string topic_id = 4;
-  repeated CreateImageRequest images = 5;
-  string user_id = 6;
+  string user_id = 5;
 }
 
-message CreateImageRequest {
-  string base64_data = 1;
-  string file_name = 2;
-  bool is_thumbnail = 3;
-  int32 sort_order = 4;
-}
+// message CreatePostRequest {
+//   string title = 1;
+//   string content = 2;
+//   bool is_published = 3;
+//   string topic_id = 4;
+//   repeated CreateImageRequest images = 5;
+//   string user_id = 6;
+// }
+
+// message CreateImageRequest {
+//   string base64_data = 1;
+//   string file_name = 2;
+//   bool is_thumbnail = 3;
+//   int32 sort_order = 4;
+// }
 
 message RestoreManyRequest {
   repeated string ids = 1;

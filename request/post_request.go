@@ -1,7 +1,5 @@
 package request
 
-import "mime/multipart"
-
 type CreateTopicRequest struct {
 	Name string  `json:"name" binding:"required,max=50"`
 	Slug *string `json:"slug" binding:"omitempty,max=50"`
@@ -19,16 +17,12 @@ type CreatePostRequest struct {
 	TopicID     string `json:"topic_id" binding:"required,uuid4"`
 }
 
-type CreatePostForm struct {
-	Title       string                `form:"title" validate:"required,min=2"`
-	Content     string                `form:"content" validate:"required,min=1"`
-	IsPublished *bool                 `form:"is_published" validate:"required"`
-	TopicID     string                `form:"topic_id" validate:"required,uuid4"`
-	Images      []CreatePostImageForm `form:"images" validate:"required,dive"`
-}
-
-type CreatePostImageForm struct {
-	IsThumbnail *bool                 `form:"is_thumbnail" validate:"required"`
-	SortOrder   int                   `form:"sort_order" validate:"required,gt=0"`
-	File        *multipart.FileHeader `form:"file" validate:"required"`
+type PostPaginationQuery struct {
+	Page        uint32 `form:"page" binding:"omitempty,min=1" json:"page"`
+	Limit       uint32 `form:"limit" binding:"omitempty,min=1,max=100" json:"limit"`
+	Sort        string `form:"sort" json:"sort"`
+	Order       string `form:"order" binding:"omitempty,oneof=asc desc" json:"order"`
+	IsPublished *bool  `form:"is_active" json:"is_published"`
+	Search      string `form:"search" json:"search"`
+	TopicID     string `form:"topic_id" json:"topic_id" binding:"omitempty,uuid4"`
 }

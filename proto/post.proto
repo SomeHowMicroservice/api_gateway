@@ -6,7 +6,7 @@ option go_package = ".";
 service PostService{
   rpc CreateTopic(CreateTopicRequest) returns (CreatedResponse);
 
-  rpc GetAllTopicsAdmin(GetManyRequest) returns (TopicsAdminResponse);
+  rpc GetAllTopicsAdmin(GetAllRequest) returns (TopicsAdminResponse);
 
   rpc UpdateTopic(UpdateTopicRequest) returns (UpdatedResponse);
 
@@ -24,9 +24,67 @@ service PostService{
 
   rpc CreatePost(CreatePostRequest) returns (CreatedResponse);
 
-  rpc GetDeletedTopics(GetManyRequest) returns (TopicsAdminResponse);
+  rpc GetDeletedTopics(GetAllRequest) returns (TopicsAdminResponse);
 
-  rpc GetAllTopics(GetManyRequest) returns (TopicsResponse);
+  rpc GetAllTopics(GetAllRequest) returns (TopicsResponse);
+
+  rpc GetAllPostsAdmin(GetAllPostsAdminRequest) returns (PostsAdminResponse);
+
+  rpc GetPostById(GetOneRequest) returns (PostAdminDetailsResponse);
+}
+
+message PostAdminDetailsResponse {
+  string id = 1;
+  string title = 2;
+  string slug = 3;
+  string content = 4;
+  string topic_id = 5;
+  optional bool is_published = 6;
+  optional string published_at = 7;
+  string created_at = 8;
+  string updated_at = 9;
+  BaseUserResponse created_by = 10;
+  BaseUserResponse updated_by = 11;
+}
+
+message GetOneRequest {
+  string id = 1;
+}
+
+message GetAllPostsAdminRequest {
+  uint32 page = 1;
+  uint32 limit = 2;
+  string sort = 3;
+  string order = 4;
+  string search = 5;
+  string topic_id = 6;
+  optional bool is_published = 7;
+}
+
+message PostsAdminResponse {
+  repeated PostAdminResponse posts = 1;
+  PaginationMetaResponse meta = 2;
+}
+
+message PostAdminResponse {
+  string id = 1;
+  string title = 2;
+  TopicResponse topic = 3;
+  SimpleImageResponse thumbnail = 4;
+}
+
+message SimpleImageResponse {
+  string id = 1;
+  string url = 2;
+}
+
+message PaginationMetaResponse {
+  uint32 page = 1;
+  uint32 limit = 2;
+  uint32 total = 3;
+  uint32 total_pages = 4;
+  optional bool has_prev = 5;
+  optional bool has_next = 6;
 }
 
 message TopicResponse {
@@ -46,22 +104,6 @@ message CreatePostRequest {
   string topic_id = 4;
   string user_id = 5;
 }
-
-// message CreatePostRequest {
-//   string title = 1;
-//   string content = 2;
-//   bool is_published = 3;
-//   string topic_id = 4;
-//   repeated CreateImageRequest images = 5;
-//   string user_id = 6;
-// }
-
-// message CreateImageRequest {
-//   string base64_data = 1;
-//   string file_name = 2;
-//   bool is_thumbnail = 3;
-//   int32 sort_order = 4;
-// }
 
 message RestoreManyRequest {
   repeated string ids = 1;
@@ -136,7 +178,7 @@ message BaseProfileResponse {
   string last_name = 3;
 }
 
-message GetManyRequest {}
+message GetAllRequest {}
 
 message CreateTopicRequest {
   string name = 1;

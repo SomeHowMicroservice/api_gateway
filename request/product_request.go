@@ -111,7 +111,7 @@ type RestoreManyRequest struct {
 	IDs []string `json:"ids" binding:"required,dive,uuid4"`
 }
 
-type PaginationQuery struct {
+type ProductPaginationQuery struct {
 	Page       uint32 `form:"page" binding:"omitempty,min=1" json:"page"`
 	Limit      uint32 `form:"limit" binding:"omitempty,min=1,max=100" json:"limit"`
 	Sort       string `form:"sort" json:"sort"`

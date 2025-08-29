@@ -8,9 +8,9 @@ service UserService {
 
   rpc CheckUsernameExists(CheckUsernameExistsRequest) returns (CheckedResponse);
 
-  rpc GetUserPublicById(GetUserByIdRequest) returns (UserPublicResponse);
+  rpc GetUserPublicById(GetOneRequest) returns (UserPublicResponse);
 
-  rpc GetUserById(GetUserByIdRequest) returns (UserResponse);
+  rpc GetUserById(GetOneRequest) returns (UserResponse);
 
   rpc GetUserPublicByEmail(GetUserByEmailRequest) returns (UserPublicResponse);
 
@@ -24,28 +24,36 @@ service UserService {
 
   rpc UpdateMeasurement(UpdateMeasurementRequest) returns (MeasurementResponse);
 
-  rpc GetMeasurementByUserId(GetMeasurementByUserIdRequest) returns (MeasurementResponse);
+  rpc GetMeasurementByUserId(GetByUserIdRequest) returns (MeasurementResponse);
 
-  rpc GetAddressesByUserId(GetAddressesByUserIdRequest) returns (AddressesResponse);
+  rpc GetAddressesByUserId(GetByUserIdRequest) returns (AddressesResponse);
 
   rpc CreateAddress(CreateAddressRequest) returns (AddressResponse);
 
   rpc UpdateAddress(UpdateAddressRequest) returns (AddressResponse);
 
-  rpc DeleteAddress(DeleteAddressRequest) returns (AddressDeletedResponse);
+  rpc DeleteAddress(DeleteAddressRequest) returns (DeletedResponse);
 
-  rpc GetUsersById(GetUsersByIdRequest) returns (UsersPublicResponse);
+  rpc GetUsersById(GetManyRequest) returns (UsersPublicResponse);
+}
+
+message GetByUserIdRequest {
+  string user_id = 1;
 }
 
 message UsersPublicResponse {
   repeated UserPublicResponse users = 1;
 }
 
-message GetUsersByIdRequest {
+message GetOneRequest {
+  string id = 1;
+}
+
+message GetManyRequest {
   repeated string ids = 1;
 }
 
-message AddressDeletedResponse {
+message DeletedResponse {
   bool success = 1;
 }
 
@@ -89,10 +97,6 @@ message UpdateAddressRequest {
   string user_id = 8;
 }
 
-message GetAddressesByUserIdRequest {
-  string user_id = 1;
-}
-
 message MeasurementResponse {
   string id = 1;
   int32 height = 2;
@@ -100,10 +104,6 @@ message MeasurementResponse {
   int32 chest = 4;
   int32 waist = 5;
   int32 butt = 6;
-}
-
-message GetMeasurementByUserIdRequest {
-  string user_id = 1;
 }
 
 message UpdateMeasurementRequest {
@@ -175,10 +175,6 @@ message UserPublicResponse {
   repeated string roles = 4;
   string created_at = 5;
   ProfileResponse profile = 6;
-}
-
-message GetUserByIdRequest {
-  string id = 1;
 }
 
 message GetUserByUsernameRequest {

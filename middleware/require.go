@@ -169,7 +169,7 @@ func hasRoleUser(role string, roles []string) bool {
 }
 
 func fetchUserFromUserService(ctx context.Context, userID string, userClient userpb.UserServiceClient) (*userpb.UserPublicResponse, error) {
-	userRes, err := userClient.GetUserPublicById(ctx, &userpb.GetUserByIdRequest{Id: userID})
+	userRes, err := userClient.GetUserPublicById(ctx, &userpb.GetOneRequest{Id: userID})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {

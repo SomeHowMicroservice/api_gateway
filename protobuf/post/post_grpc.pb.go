@@ -31,6 +31,8 @@ const (
 	PostService_CreatePost_FullMethodName              = "/post.PostService/CreatePost"
 	PostService_GetDeletedTopics_FullMethodName        = "/post.PostService/GetDeletedTopics"
 	PostService_GetAllTopics_FullMethodName            = "/post.PostService/GetAllTopics"
+	PostService_GetAllPostsAdmin_FullMethodName        = "/post.PostService/GetAllPostsAdmin"
+	PostService_GetPostById_FullMethodName             = "/post.PostService/GetPostById"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -38,7 +40,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PostServiceClient interface {
 	CreateTopic(ctx context.Context, in *CreateTopicRequest, opts ...grpc.CallOption) (*CreatedResponse, error)
-	GetAllTopicsAdmin(ctx context.Context, in *GetManyRequest, opts ...grpc.CallOption) (*TopicsAdminResponse, error)
+	GetAllTopicsAdmin(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*TopicsAdminResponse, error)
 	UpdateTopic(ctx context.Context, in *UpdateTopicRequest, opts ...grpc.CallOption) (*UpdatedResponse, error)
 	DeleteTopic(ctx context.Context, in *DeleteOneRequest, opts ...grpc.CallOption) (*DeletedResponse, error)
 	DeleteTopics(ctx context.Context, in *DeleteManyRequest, opts ...grpc.CallOption) (*DeletedResponse, error)
@@ -47,8 +49,10 @@ type PostServiceClient interface {
 	RestoreTopic(ctx context.Context, in *RestoreOneRequest, opts ...grpc.CallOption) (*RestoredResponse, error)
 	RestoreTopics(ctx context.Context, in *RestoreManyRequest, opts ...grpc.CallOption) (*RestoredResponse, error)
 	CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatedResponse, error)
-	GetDeletedTopics(ctx context.Context, in *GetManyRequest, opts ...grpc.CallOption) (*TopicsAdminResponse, error)
-	GetAllTopics(ctx context.Context, in *GetManyRequest, opts ...grpc.CallOption) (*TopicsResponse, error)
+	GetDeletedTopics(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*TopicsAdminResponse, error)
+	GetAllTopics(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*TopicsResponse, error)
+	GetAllPostsAdmin(ctx context.Context, in *GetAllPostsAdminRequest, opts ...grpc.CallOption) (*PostsAdminResponse, error)
+	GetPostById(ctx context.Context, in *GetOneRequest, opts ...grpc.CallOption) (*PostAdminDetailsResponse, error)
 }
 
 type postServiceClient struct {
@@ -69,7 +73,7 @@ func (c *postServiceClient) CreateTopic(ctx context.Context, in *CreateTopicRequ
 	return out, nil
 }
 
-func (c *postServiceClient) GetAllTopicsAdmin(ctx context.Context, in *GetManyRequest, opts ...grpc.CallOption) (*TopicsAdminResponse, error) {
+func (c *postServiceClient) GetAllTopicsAdmin(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*TopicsAdminResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TopicsAdminResponse)
 	err := c.cc.Invoke(ctx, PostService_GetAllTopicsAdmin_FullMethodName, in, out, cOpts...)
@@ -159,7 +163,7 @@ func (c *postServiceClient) CreatePost(ctx context.Context, in *CreatePostReques
 	return out, nil
 }
 
-func (c *postServiceClient) GetDeletedTopics(ctx context.Context, in *GetManyRequest, opts ...grpc.CallOption) (*TopicsAdminResponse, error) {
+func (c *postServiceClient) GetDeletedTopics(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*TopicsAdminResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TopicsAdminResponse)
 	err := c.cc.Invoke(ctx, PostService_GetDeletedTopics_FullMethodName, in, out, cOpts...)
@@ -169,10 +173,30 @@ func (c *postServiceClient) GetDeletedTopics(ctx context.Context, in *GetManyReq
 	return out, nil
 }
 
-func (c *postServiceClient) GetAllTopics(ctx context.Context, in *GetManyRequest, opts ...grpc.CallOption) (*TopicsResponse, error) {
+func (c *postServiceClient) GetAllTopics(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*TopicsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TopicsResponse)
 	err := c.cc.Invoke(ctx, PostService_GetAllTopics_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) GetAllPostsAdmin(ctx context.Context, in *GetAllPostsAdminRequest, opts ...grpc.CallOption) (*PostsAdminResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PostsAdminResponse)
+	err := c.cc.Invoke(ctx, PostService_GetAllPostsAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) GetPostById(ctx context.Context, in *GetOneRequest, opts ...grpc.CallOption) (*PostAdminDetailsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PostAdminDetailsResponse)
+	err := c.cc.Invoke(ctx, PostService_GetPostById_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +208,7 @@ func (c *postServiceClient) GetAllTopics(ctx context.Context, in *GetManyRequest
 // for forward compatibility.
 type PostServiceServer interface {
 	CreateTopic(context.Context, *CreateTopicRequest) (*CreatedResponse, error)
-	GetAllTopicsAdmin(context.Context, *GetManyRequest) (*TopicsAdminResponse, error)
+	GetAllTopicsAdmin(context.Context, *GetAllRequest) (*TopicsAdminResponse, error)
 	UpdateTopic(context.Context, *UpdateTopicRequest) (*UpdatedResponse, error)
 	DeleteTopic(context.Context, *DeleteOneRequest) (*DeletedResponse, error)
 	DeleteTopics(context.Context, *DeleteManyRequest) (*DeletedResponse, error)
@@ -193,8 +217,10 @@ type PostServiceServer interface {
 	RestoreTopic(context.Context, *RestoreOneRequest) (*RestoredResponse, error)
 	RestoreTopics(context.Context, *RestoreManyRequest) (*RestoredResponse, error)
 	CreatePost(context.Context, *CreatePostRequest) (*CreatedResponse, error)
-	GetDeletedTopics(context.Context, *GetManyRequest) (*TopicsAdminResponse, error)
-	GetAllTopics(context.Context, *GetManyRequest) (*TopicsResponse, error)
+	GetDeletedTopics(context.Context, *GetAllRequest) (*TopicsAdminResponse, error)
+	GetAllTopics(context.Context, *GetAllRequest) (*TopicsResponse, error)
+	GetAllPostsAdmin(context.Context, *GetAllPostsAdminRequest) (*PostsAdminResponse, error)
+	GetPostById(context.Context, *GetOneRequest) (*PostAdminDetailsResponse, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -208,7 +234,7 @@ type UnimplementedPostServiceServer struct{}
 func (UnimplementedPostServiceServer) CreateTopic(context.Context, *CreateTopicRequest) (*CreatedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTopic not implemented")
 }
-func (UnimplementedPostServiceServer) GetAllTopicsAdmin(context.Context, *GetManyRequest) (*TopicsAdminResponse, error) {
+func (UnimplementedPostServiceServer) GetAllTopicsAdmin(context.Context, *GetAllRequest) (*TopicsAdminResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllTopicsAdmin not implemented")
 }
 func (UnimplementedPostServiceServer) UpdateTopic(context.Context, *UpdateTopicRequest) (*UpdatedResponse, error) {
@@ -235,11 +261,17 @@ func (UnimplementedPostServiceServer) RestoreTopics(context.Context, *RestoreMan
 func (UnimplementedPostServiceServer) CreatePost(context.Context, *CreatePostRequest) (*CreatedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePost not implemented")
 }
-func (UnimplementedPostServiceServer) GetDeletedTopics(context.Context, *GetManyRequest) (*TopicsAdminResponse, error) {
+func (UnimplementedPostServiceServer) GetDeletedTopics(context.Context, *GetAllRequest) (*TopicsAdminResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDeletedTopics not implemented")
 }
-func (UnimplementedPostServiceServer) GetAllTopics(context.Context, *GetManyRequest) (*TopicsResponse, error) {
+func (UnimplementedPostServiceServer) GetAllTopics(context.Context, *GetAllRequest) (*TopicsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllTopics not implemented")
+}
+func (UnimplementedPostServiceServer) GetAllPostsAdmin(context.Context, *GetAllPostsAdminRequest) (*PostsAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllPostsAdmin not implemented")
+}
+func (UnimplementedPostServiceServer) GetPostById(context.Context, *GetOneRequest) (*PostAdminDetailsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPostById not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 func (UnimplementedPostServiceServer) testEmbeddedByValue()                     {}
@@ -281,7 +313,7 @@ func _PostService_CreateTopic_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _PostService_GetAllTopicsAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetManyRequest)
+	in := new(GetAllRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -293,7 +325,7 @@ func _PostService_GetAllTopicsAdmin_Handler(srv interface{}, ctx context.Context
 		FullMethod: PostService_GetAllTopicsAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).GetAllTopicsAdmin(ctx, req.(*GetManyRequest))
+		return srv.(PostServiceServer).GetAllTopicsAdmin(ctx, req.(*GetAllRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -443,7 +475,7 @@ func _PostService_CreatePost_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _PostService_GetDeletedTopics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetManyRequest)
+	in := new(GetAllRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -455,13 +487,13 @@ func _PostService_GetDeletedTopics_Handler(srv interface{}, ctx context.Context,
 		FullMethod: PostService_GetDeletedTopics_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).GetDeletedTopics(ctx, req.(*GetManyRequest))
+		return srv.(PostServiceServer).GetDeletedTopics(ctx, req.(*GetAllRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PostService_GetAllTopics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetManyRequest)
+	in := new(GetAllRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -473,7 +505,43 @@ func _PostService_GetAllTopics_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: PostService_GetAllTopics_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).GetAllTopics(ctx, req.(*GetManyRequest))
+		return srv.(PostServiceServer).GetAllTopics(ctx, req.(*GetAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_GetAllPostsAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllPostsAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).GetAllPostsAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_GetAllPostsAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).GetAllPostsAdmin(ctx, req.(*GetAllPostsAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_GetPostById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).GetPostById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_GetPostById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).GetPostById(ctx, req.(*GetOneRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -532,6 +600,14 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllTopics",
 			Handler:    _PostService_GetAllTopics_Handler,
+		},
+		{
+			MethodName: "GetAllPostsAdmin",
+			Handler:    _PostService_GetAllPostsAdmin_Handler,
+		},
+		{
+			MethodName: "GetPostById",
+			Handler:    _PostService_GetPostById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

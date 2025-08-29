@@ -79,16 +79,14 @@ func (h *ProductHandler) CreateCategory(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusCreated, "Tạo danh mục sản phẩm thành công", gin.H{
-		"category_id": res.Id,
-	})
+	common.JSON(c, http.StatusCreated, "Tạo danh mục sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) GetCategoryTree(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetCategoryTree(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetCategoryTree(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
@@ -98,16 +96,14 @@ func (h *ProductHandler) GetCategoryTree(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy danh mục sản phẩm thành công", gin.H{
-		"categories": res.Categories,
-	})
+	common.JSON(c, http.StatusOK, "Lấy danh mục sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) GetCategoriesNoChild(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetCategoriesNoChild(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetCategoriesNoChild(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
@@ -117,9 +113,7 @@ func (h *ProductHandler) GetCategoriesNoChild(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy danh mục sản phẩm không có con thành công", gin.H{
-		"categories": res.Categories,
-	})
+	common.JSON(c, http.StatusOK, "Lấy danh mục sản phẩm không có con thành công", res)
 }
 
 func (h *ProductHandler) CreateProduct(c *gin.Context) {
@@ -363,9 +357,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusCreated, "Tạo sản phẩm thành công", gin.H{
-		"product_id": res.Id,
-	})
+	common.JSON(c, http.StatusCreated, "Tạo sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) UpdateProduct(c *gin.Context) {
@@ -818,9 +810,7 @@ func (h *ProductHandler) CreateColor(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusCreated, "Tạo màu sắc thành công", gin.H{
-		"color_id": res.Id,
-	})
+	common.JSON(c, http.StatusCreated, "Tạo màu sắc thành công", res)
 }
 
 func (h *ProductHandler) CreateSize(c *gin.Context) {
@@ -864,9 +854,7 @@ func (h *ProductHandler) CreateSize(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusCreated, "Tạo size thành công", gin.H{
-		"size_id": res.Id,
-	})
+	common.JSON(c, http.StatusCreated, "Tạo size thành công", res)
 }
 
 func (h *ProductHandler) GetProductsByCategory(c *gin.Context) {
@@ -892,9 +880,7 @@ func (h *ProductHandler) GetProductsByCategory(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy danh sách sản phẩm thành công", gin.H{
-		"products": res.Products,
-	})
+	common.JSON(c, http.StatusOK, "Lấy danh sách sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) CreateTag(c *gin.Context) {
@@ -938,16 +924,14 @@ func (h *ProductHandler) CreateTag(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusCreated, "Tạo tag sản phẩm thành công", gin.H{
-		"tag_id": res.Id,
-	})
+	common.JSON(c, http.StatusCreated, "Tạo tag sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) GetAllCategoriesAdmin(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetAllCategoriesAdmin(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetAllCategoriesAdmin(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {
@@ -962,16 +946,14 @@ func (h *ProductHandler) GetAllCategoriesAdmin(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả danh mục sản phẩm thành công", gin.H{
-		"categories": res.Categories,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả danh mục sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) GetCategoriesNoProduct(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetCategoriesNoProduct(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetCategoriesNoProduct(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
@@ -981,9 +963,7 @@ func (h *ProductHandler) GetCategoriesNoProduct(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy danh sách danh mục sản phẩm thành công", gin.H{
-		"categories": res.Categories,
-	})
+	common.JSON(c, http.StatusOK, "Lấy danh sách danh mục sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) CategoryAdminDetails(c *gin.Context) {
@@ -992,7 +972,7 @@ func (h *ProductHandler) CategoryAdminDetails(c *gin.Context) {
 
 	categoryID := c.Param("id")
 
-	res, err := h.productClient.GetCategoryById(ctx, &productpb.GetCategoryByIdRequest{
+	res, err := h.productClient.GetCategoryById(ctx, &productpb.GetOneRequest{
 		Id: categoryID,
 	})
 	if err != nil {
@@ -1069,7 +1049,7 @@ func (h *ProductHandler) GetAllColorsAdmin(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetAllColorsAdmin(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetAllColorsAdmin(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {
@@ -1084,16 +1064,14 @@ func (h *ProductHandler) GetAllColorsAdmin(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả màu sắc sản phẩm thành công", gin.H{
-		"colors": res.Colors,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả màu sắc sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) GetAllColors(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetAllColors(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetAllColors(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
@@ -1103,16 +1081,14 @@ func (h *ProductHandler) GetAllColors(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả màu sắc sản phẩm thành công", gin.H{
-		"colors": res.Colors,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả màu sắc sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) GetAllSizesAdmin(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetAllSizesAdmin(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetAllSizesAdmin(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {
@@ -1127,16 +1103,14 @@ func (h *ProductHandler) GetAllSizesAdmin(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả size sản phẩm thành công", gin.H{
-		"sizes": res.Sizes,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả size sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) GetAllSizes(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetAllSizes(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetAllSizes(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
@@ -1146,16 +1120,14 @@ func (h *ProductHandler) GetAllSizes(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả size sản phẩm thành công", gin.H{
-		"sizes": res.Sizes,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả size sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) GetAllTagsAdmin(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetAllTagsAdmin(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetAllTagsAdmin(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {
@@ -1170,16 +1142,14 @@ func (h *ProductHandler) GetAllTagsAdmin(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả size sản phẩm thành công", gin.H{
-		"tags": res.Tags,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả size sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) GetAllTags(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetAllTags(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetAllTags(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
@@ -1189,9 +1159,7 @@ func (h *ProductHandler) GetAllTags(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả tag sản phẩm thành công", gin.H{
-		"tags": res.Tags,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả tag sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) UpdateTag(c *gin.Context) {
@@ -1248,7 +1216,7 @@ func (h *ProductHandler) GetProductByID(c *gin.Context) {
 
 	productID := c.Param("id")
 
-	res, err := h.productClient.GetProductById(ctx, &productpb.GetProductByIdRequest{
+	res, err := h.productClient.GetProductById(ctx, &productpb.GetOneRequest{
 		Id: productID,
 	})
 	if err != nil {
@@ -1274,7 +1242,7 @@ func (h *ProductHandler) GetAllProductsAdmin(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	var query request.PaginationQuery
+	var query request.ProductPaginationQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
 		message := common.HandleValidationError(err)
 		common.JSON(c, http.StatusBadRequest, message, nil)
@@ -1299,10 +1267,7 @@ func (h *ProductHandler) GetAllProductsAdmin(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả sản phẩm thành công", gin.H{
-		"products": res.Products,
-		"meta":     res.Meta,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) DeleteProduct(c *gin.Context) {
@@ -1703,7 +1668,7 @@ func (h *ProductHandler) GetDeletedProducts(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	var query request.PaginationQuery
+	var query request.ProductPaginationQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
 		message := common.HandleValidationError(err)
 		common.JSON(c, http.StatusBadRequest, message, nil)
@@ -1728,10 +1693,7 @@ func (h *ProductHandler) GetDeletedProducts(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả sản phẩm đã xóa thành công", gin.H{
-		"products": res.Products,
-		"meta":     res.Meta,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả sản phẩm đã xóa thành công", res)
 }
 
 func (h *ProductHandler) GetDeletedProductByID(c *gin.Context) {
@@ -1740,7 +1702,7 @@ func (h *ProductHandler) GetDeletedProductByID(c *gin.Context) {
 
 	productID := c.Param("id")
 
-	res, err := h.productClient.GetDeletedProductById(ctx, &productpb.GetProductByIdRequest{
+	res, err := h.productClient.GetDeletedProductById(ctx, &productpb.GetOneRequest{
 		Id: productID,
 	})
 	if err != nil {
@@ -1766,7 +1728,7 @@ func (h *ProductHandler) GetDeletedColors(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetDeletedColors(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetDeletedColors(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {
@@ -1781,16 +1743,14 @@ func (h *ProductHandler) GetDeletedColors(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả màu sắc đã xóa thành công", gin.H{
-		"colors": res.Colors,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả màu sắc đã xóa thành công", res)
 }
 
 func (h *ProductHandler) GetDeletedSizes(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetDeletedSizes(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetDeletedSizes(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {
@@ -1805,16 +1765,14 @@ func (h *ProductHandler) GetDeletedSizes(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả kích cỡ đã xóa thành công", gin.H{
-		"sizes": res.Sizes,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả kích cỡ đã xóa thành công", res)
 }
 
 func (h *ProductHandler) GetDeletedTags(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	res, err := h.productClient.GetDeletedTags(ctx, &productpb.GetManyRequest{})
+	res, err := h.productClient.GetDeletedTags(ctx, &productpb.GetAllRequest{})
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			switch st.Code() {
@@ -1829,9 +1787,7 @@ func (h *ProductHandler) GetDeletedTags(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy tất cả thẻ đã xóa thành công", gin.H{
-		"tags": res.Tags,
-	})
+	common.JSON(c, http.StatusOK, "Lấy tất cả thẻ đã xóa thành công", res)
 }
 
 func (h *ProductHandler) DeleteTag(c *gin.Context) {

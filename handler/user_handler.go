@@ -107,7 +107,7 @@ func (h *UserHandler) MyMeasurements(c *gin.Context) {
 		return
 	}
 
-	res, err := h.userClient.GetMeasurementByUserId(ctx, &userpb.GetMeasurementByUserIdRequest{
+	res, err := h.userClient.GetMeasurementByUserId(ctx, &userpb.GetByUserIdRequest{
 		UserId: user.Id,
 	})
 	if err != nil {
@@ -216,7 +216,7 @@ func (h *UserHandler) MyAddresses(c *gin.Context) {
 		return
 	}
 
-	res, err := h.userClient.GetAddressesByUserId(ctx, &userpb.GetAddressesByUserIdRequest{
+	res, err := h.userClient.GetAddressesByUserId(ctx, &userpb.GetByUserIdRequest{
 		UserId: user.Id,
 	})
 
@@ -229,9 +229,7 @@ func (h *UserHandler) MyAddresses(c *gin.Context) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Lấy địa chỉ người dùng thành công", gin.H{
-		"addresses": res.Addresses,
-	})
+	common.JSON(c, http.StatusOK, "Lấy địa chỉ người dùng thành công", res)
 }
 
 func (h *UserHandler) CreateMyAddress(c *gin.Context) {

@@ -31,5 +31,7 @@ func PostRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.Us
 		admin.DELETE("/topics/:id/permanent", postHandler.PermanentlyDeleteTopic)
 		admin.DELETE("/topics/permanent", postHandler.PermanentlyDeleteTopics)
 		admin.POST("/posts", postHandler.CreatePost)
+		admin.GET("/posts", postHandler.GetAllPostsAdmin)
+		admin.GET("/posts/:id", postHandler.GetPostByID)
 	}
 }

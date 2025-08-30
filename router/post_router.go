@@ -26,8 +26,8 @@ func PostRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.Us
 		admin.PUT("/topics/:id", postHandler.UpdateTopic)
 		admin.DELETE("/topics/:id", postHandler.DeleteTopic)
 		admin.DELETE("/topics", postHandler.DeleteTopics)
-		admin.PUT("/topics/:id/restore", postHandler.RestoreTopic)
-		admin.PUT("/topics/restore", postHandler.RestoreTopics)
+		admin.PATCH("/topics/:id/restore", postHandler.RestoreTopic)
+		admin.PATCH("/topics/restore", postHandler.RestoreTopics)
 		admin.DELETE("/topics/:id/permanent", postHandler.PermanentlyDeleteTopic)
 		admin.DELETE("/topics/permanent", postHandler.PermanentlyDeleteTopics)
 		admin.POST("/posts", postHandler.CreatePost)
@@ -35,5 +35,10 @@ func PostRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.Us
 		admin.GET("/posts/:id", postHandler.GetPostByID)
 		admin.PATCH("/posts/:id", postHandler.UpdatePost)
 		admin.DELETE("/posts/:id", postHandler.DeletePost)
+		admin.DELETE("/posts", postHandler.DeletePosts)
+		admin.PATCH("/posts/:id/restore", postHandler.RestorePost)
+		admin.PATCH("/posts/restore", postHandler.RestorePosts)
+		admin.DELETE("/posts/:id/permanent", postHandler.PermanentlyDeletePost)
+		admin.DELETE("/posts/permanent", postHandler.PermanentlyDeletePosts)
 	}
 }

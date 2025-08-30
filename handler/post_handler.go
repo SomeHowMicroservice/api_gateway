@@ -505,3 +505,107 @@ func (h *PostHandler) GetPostByID(c *gin.Context) {
 		"post": res,
 	})
 }
+
+func (h *PostHandler) UpdatePost(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
+	defer cancel()
+
+	userAny, exists := c.Get("user")
+	if !exists {
+		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		return
+	}
+
+	user, ok := userAny.(*userpb.UserPublicResponse)
+	if !ok {
+		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
+		return
+	}
+
+	var req request.UpdatePostRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		message := common.HandleValidationError(err)
+		common.JSON(c, http.StatusBadRequest, message, nil)
+		return
+	}
+
+	postID := c.Param("id")
+
+	var title, content, topicID string
+	var isPublished bool
+	if req.Title != nil {
+		title = *req.Title
+	}
+	if req.Content != nil {
+		content = *req.Content
+	}
+	if req.TopicID != nil {
+		topicID = *req.TopicID
+	}
+	if req.IsPublished != nil {
+		isPublished = *req.IsPublished
+	}
+
+	if _, err := h.postClient.UpdatePost(ctx, &postpb.UpdatePostRequest{
+		Id:          postID,
+		Title:       &title,
+		Content:     &content,
+		TopicId:     &topicID,
+		IsPublished: &isPublished,
+		UserId:      user.Id,
+	}); err != nil {
+		if st, ok := status.FromError(err); ok {
+			switch st.Code() {
+			case codes.NotFound:
+				common.JSON(c, http.StatusNotFound, st.Message(), nil)
+			case codes.AlreadyExists:
+				common.JSON(c, http.StatusConflict, st.Message(), nil)
+			default:
+				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
+			}
+			return
+		}
+		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+		return
+	}
+
+	common.JSON(c, http.StatusOK, "Chỉnh sửa bài viết thành công", nil)
+}
+
+func (h *PostHandler) DeletePost(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
+	defer cancel()
+
+	userAny, exists := c.Get("user")
+	if !exists {
+		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		return
+	}
+
+	user, ok := userAny.(*userpb.UserPublicResponse)
+	if !ok {
+		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
+		return
+	}
+
+	postID := c.Param("id")
+
+		if _, err := h.postClient.DeletePost(ctx, &postpb.DeleteOneRequest{
+		Id:     postID,
+		UserId: user.Id,
+	}); err != nil {
+		if st, ok := status.FromError(err); ok {
+			switch st.Code() {
+			case codes.NotFound:
+				common.JSON(c, http.StatusNotFound, st.Message(), nil)
+			default:
+				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
+			}
+			return
+		}
+		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+		return
+	}
+
+	common.JSON(c, http.StatusOK, "Chuyển bài viết vào thùng rác thành công", nil)
+}

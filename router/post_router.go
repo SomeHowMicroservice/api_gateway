@@ -33,5 +33,7 @@ func PostRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.Us
 		admin.POST("/posts", postHandler.CreatePost)
 		admin.GET("/posts", postHandler.GetAllPostsAdmin)
 		admin.GET("/posts/:id", postHandler.GetPostByID)
+		admin.PATCH("/posts/:id", postHandler.UpdatePost)
+		admin.DELETE("/posts/:id", postHandler.DeletePost)
 	}
 }

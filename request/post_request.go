@@ -17,6 +17,13 @@ type CreatePostRequest struct {
 	TopicID     string `json:"topic_id" binding:"required,uuid4"`
 }
 
+type UpdatePostRequest struct {
+	Title       *string `json:"title" binding:"omitempty,min=1"`
+	Content     *string `json:"content" binding:"omitempty,min=1"`
+	IsPublished *bool   `json:"is_published" binding:"omitempty"`
+	TopicID     *string `json:"topic_id" binding:"omitempty,uuid4"`
+}
+
 type PostPaginationQuery struct {
 	Page        uint32 `form:"page" binding:"omitempty,min=1" json:"page"`
 	Limit       uint32 `form:"limit" binding:"omitempty,min=1,max=100" json:"limit"`

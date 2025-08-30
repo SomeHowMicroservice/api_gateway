@@ -31,6 +31,29 @@ service PostService{
   rpc GetAllPostsAdmin(GetAllPostsAdminRequest) returns (PostsAdminResponse);
 
   rpc GetPostById(GetOneRequest) returns (PostAdminDetailsResponse);
+
+  rpc UpdatePost(UpdatePostRequest) returns (UpdatedResponse);
+
+  rpc DeletePost(DeleteOneRequest) returns (DeletedResponse);
+
+  rpc DeletePosts(DeleteManyRequest) returns (DeletedResponse);
+
+  rpc RestorePost(RestoreOneRequest) returns (RestoredResponse);
+
+  rpc RestorePosts(RestoreManyRequest) returns (RestoredResponse);
+
+  rpc PermanentlyDeletePost(PermanentlyDeleteOneRequest) returns (DeletedResponse);
+
+  rpc PermanentlyDeletePosts(PermanentlyDeleteManyRequest) returns (DeletedResponse);
+}
+
+message UpdatePostRequest {
+  string id = 1;
+  optional string title = 2;
+  optional string content = 3;
+  optional bool is_published = 4;
+  optional string topic_id = 5;
+  string user_id = 6;
 }
 
 message PostAdminDetailsResponse {

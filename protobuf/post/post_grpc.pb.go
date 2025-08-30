@@ -33,6 +33,13 @@ const (
 	PostService_GetAllTopics_FullMethodName            = "/post.PostService/GetAllTopics"
 	PostService_GetAllPostsAdmin_FullMethodName        = "/post.PostService/GetAllPostsAdmin"
 	PostService_GetPostById_FullMethodName             = "/post.PostService/GetPostById"
+	PostService_UpdatePost_FullMethodName              = "/post.PostService/UpdatePost"
+	PostService_DeletePost_FullMethodName              = "/post.PostService/DeletePost"
+	PostService_DeletePosts_FullMethodName             = "/post.PostService/DeletePosts"
+	PostService_RestorePost_FullMethodName             = "/post.PostService/RestorePost"
+	PostService_RestorePosts_FullMethodName            = "/post.PostService/RestorePosts"
+	PostService_PermanentlyDeletePost_FullMethodName   = "/post.PostService/PermanentlyDeletePost"
+	PostService_PermanentlyDeletePosts_FullMethodName  = "/post.PostService/PermanentlyDeletePosts"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -53,6 +60,13 @@ type PostServiceClient interface {
 	GetAllTopics(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*TopicsResponse, error)
 	GetAllPostsAdmin(ctx context.Context, in *GetAllPostsAdminRequest, opts ...grpc.CallOption) (*PostsAdminResponse, error)
 	GetPostById(ctx context.Context, in *GetOneRequest, opts ...grpc.CallOption) (*PostAdminDetailsResponse, error)
+	UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*UpdatedResponse, error)
+	DeletePost(ctx context.Context, in *DeleteOneRequest, opts ...grpc.CallOption) (*DeletedResponse, error)
+	DeletePosts(ctx context.Context, in *DeleteManyRequest, opts ...grpc.CallOption) (*DeletedResponse, error)
+	RestorePost(ctx context.Context, in *RestoreOneRequest, opts ...grpc.CallOption) (*RestoredResponse, error)
+	RestorePosts(ctx context.Context, in *RestoreManyRequest, opts ...grpc.CallOption) (*RestoredResponse, error)
+	PermanentlyDeletePost(ctx context.Context, in *PermanentlyDeleteOneRequest, opts ...grpc.CallOption) (*DeletedResponse, error)
+	PermanentlyDeletePosts(ctx context.Context, in *PermanentlyDeleteManyRequest, opts ...grpc.CallOption) (*DeletedResponse, error)
 }
 
 type postServiceClient struct {
@@ -203,6 +217,76 @@ func (c *postServiceClient) GetPostById(ctx context.Context, in *GetOneRequest, 
 	return out, nil
 }
 
+func (c *postServiceClient) UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*UpdatedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdatedResponse)
+	err := c.cc.Invoke(ctx, PostService_UpdatePost_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) DeletePost(ctx context.Context, in *DeleteOneRequest, opts ...grpc.CallOption) (*DeletedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeletedResponse)
+	err := c.cc.Invoke(ctx, PostService_DeletePost_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) DeletePosts(ctx context.Context, in *DeleteManyRequest, opts ...grpc.CallOption) (*DeletedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeletedResponse)
+	err := c.cc.Invoke(ctx, PostService_DeletePosts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) RestorePost(ctx context.Context, in *RestoreOneRequest, opts ...grpc.CallOption) (*RestoredResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RestoredResponse)
+	err := c.cc.Invoke(ctx, PostService_RestorePost_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) RestorePosts(ctx context.Context, in *RestoreManyRequest, opts ...grpc.CallOption) (*RestoredResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RestoredResponse)
+	err := c.cc.Invoke(ctx, PostService_RestorePosts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) PermanentlyDeletePost(ctx context.Context, in *PermanentlyDeleteOneRequest, opts ...grpc.CallOption) (*DeletedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeletedResponse)
+	err := c.cc.Invoke(ctx, PostService_PermanentlyDeletePost_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) PermanentlyDeletePosts(ctx context.Context, in *PermanentlyDeleteManyRequest, opts ...grpc.CallOption) (*DeletedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeletedResponse)
+	err := c.cc.Invoke(ctx, PostService_PermanentlyDeletePosts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostServiceServer is the server API for PostService service.
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility.
@@ -221,6 +305,13 @@ type PostServiceServer interface {
 	GetAllTopics(context.Context, *GetAllRequest) (*TopicsResponse, error)
 	GetAllPostsAdmin(context.Context, *GetAllPostsAdminRequest) (*PostsAdminResponse, error)
 	GetPostById(context.Context, *GetOneRequest) (*PostAdminDetailsResponse, error)
+	UpdatePost(context.Context, *UpdatePostRequest) (*UpdatedResponse, error)
+	DeletePost(context.Context, *DeleteOneRequest) (*DeletedResponse, error)
+	DeletePosts(context.Context, *DeleteManyRequest) (*DeletedResponse, error)
+	RestorePost(context.Context, *RestoreOneRequest) (*RestoredResponse, error)
+	RestorePosts(context.Context, *RestoreManyRequest) (*RestoredResponse, error)
+	PermanentlyDeletePost(context.Context, *PermanentlyDeleteOneRequest) (*DeletedResponse, error)
+	PermanentlyDeletePosts(context.Context, *PermanentlyDeleteManyRequest) (*DeletedResponse, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -272,6 +363,27 @@ func (UnimplementedPostServiceServer) GetAllPostsAdmin(context.Context, *GetAllP
 }
 func (UnimplementedPostServiceServer) GetPostById(context.Context, *GetOneRequest) (*PostAdminDetailsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPostById not implemented")
+}
+func (UnimplementedPostServiceServer) UpdatePost(context.Context, *UpdatePostRequest) (*UpdatedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePost not implemented")
+}
+func (UnimplementedPostServiceServer) DeletePost(context.Context, *DeleteOneRequest) (*DeletedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePost not implemented")
+}
+func (UnimplementedPostServiceServer) DeletePosts(context.Context, *DeleteManyRequest) (*DeletedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePosts not implemented")
+}
+func (UnimplementedPostServiceServer) RestorePost(context.Context, *RestoreOneRequest) (*RestoredResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RestorePost not implemented")
+}
+func (UnimplementedPostServiceServer) RestorePosts(context.Context, *RestoreManyRequest) (*RestoredResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RestorePosts not implemented")
+}
+func (UnimplementedPostServiceServer) PermanentlyDeletePost(context.Context, *PermanentlyDeleteOneRequest) (*DeletedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PermanentlyDeletePost not implemented")
+}
+func (UnimplementedPostServiceServer) PermanentlyDeletePosts(context.Context, *PermanentlyDeleteManyRequest) (*DeletedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PermanentlyDeletePosts not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 func (UnimplementedPostServiceServer) testEmbeddedByValue()                     {}
@@ -546,6 +658,132 @@ func _PostService_GetPostById_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_UpdatePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).UpdatePost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_UpdatePost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).UpdatePost(ctx, req.(*UpdatePostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_DeletePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).DeletePost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_DeletePost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).DeletePost(ctx, req.(*DeleteOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_DeletePosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).DeletePosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_DeletePosts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).DeletePosts(ctx, req.(*DeleteManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_RestorePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RestoreOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).RestorePost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_RestorePost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).RestorePost(ctx, req.(*RestoreOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_RestorePosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RestoreManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).RestorePosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_RestorePosts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).RestorePosts(ctx, req.(*RestoreManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_PermanentlyDeletePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PermanentlyDeleteOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).PermanentlyDeletePost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_PermanentlyDeletePost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).PermanentlyDeletePost(ctx, req.(*PermanentlyDeleteOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_PermanentlyDeletePosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PermanentlyDeleteManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).PermanentlyDeletePosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_PermanentlyDeletePosts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).PermanentlyDeletePosts(ctx, req.(*PermanentlyDeleteManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -608,6 +846,34 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPostById",
 			Handler:    _PostService_GetPostById_Handler,
+		},
+		{
+			MethodName: "UpdatePost",
+			Handler:    _PostService_UpdatePost_Handler,
+		},
+		{
+			MethodName: "DeletePost",
+			Handler:    _PostService_DeletePost_Handler,
+		},
+		{
+			MethodName: "DeletePosts",
+			Handler:    _PostService_DeletePosts_Handler,
+		},
+		{
+			MethodName: "RestorePost",
+			Handler:    _PostService_RestorePost_Handler,
+		},
+		{
+			MethodName: "RestorePosts",
+			Handler:    _PostService_RestorePosts_Handler,
+		},
+		{
+			MethodName: "PermanentlyDeletePost",
+			Handler:    _PostService_PermanentlyDeletePost_Handler,
+		},
+		{
+			MethodName: "PermanentlyDeletePosts",
+			Handler:    _PostService_PermanentlyDeletePosts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

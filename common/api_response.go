@@ -12,6 +12,7 @@ func JSON(c *gin.Context, statusCode int, message string, data interface{}) {
 	if pb, ok := data.(proto.Message); ok {
 		marshaler := protojson.MarshalOptions{
 			EmitUnpopulated: true, 
+			UseProtoNames: true,
 		}
 		jsonBytes, err := marshaler.Marshal(pb)
 		if err != nil {

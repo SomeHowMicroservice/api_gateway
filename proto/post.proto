@@ -45,6 +45,10 @@ service PostService{
   rpc PermanentlyDeletePost(PermanentlyDeleteOneRequest) returns (DeletedResponse);
 
   rpc PermanentlyDeletePosts(PermanentlyDeleteManyRequest) returns (DeletedResponse);
+
+  rpc GetDeletedPosts(GetAllPostsAdminRequest) returns (PostsAdminResponse);
+
+  rpc GetDeletedPostById(GetOneRequest) returns (PostAdminDetailsResponse);
 }
 
 message UpdatePostRequest {

@@ -788,3 +788,63 @@ func (h *PostHandler) PermanentlyDeletePosts(c *gin.Context) {
 
 	common.JSON(c, http.StatusOK, "Xóa danh sách bài viết thành công", nil)
 }
+
+func (h *PostHandler) GetDeletedPosts(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+	defer cancel()
+
+	var query request.PostPaginationQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
+		message := common.HandleValidationError(err)
+		common.JSON(c, http.StatusBadRequest, message, nil)
+		return
+	}
+
+	res, err := h.postClient.GetDeletedPosts(ctx, &postpb.GetAllPostsAdminRequest{
+		Page:        query.Page,
+		Limit:       query.Limit,
+		Sort:        query.Sort,
+		Order:       query.Order,
+		Search:      query.Search,
+		TopicId:     query.TopicID,
+		IsPublished: query.IsPublished,
+	})
+	if err != nil {
+		if st, ok := status.FromError(err); ok {
+			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
+			return
+		}
+		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+		return
+	}
+
+	common.JSON(c, http.StatusOK, "Lấy tất cả bài viết đã xóa thành công", res)
+}
+
+func (h *PostHandler) GetDeletedPostByID(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+	defer cancel()
+
+	postID := c.Param("id")
+
+	res, err := h.postClient.GetDeletedPostById(ctx, &postpb.GetOneRequest{
+		Id: postID,
+	})
+	if err != nil {
+		if st, ok := status.FromError(err); ok {
+			switch st.Code() {
+			case codes.NotFound:
+				common.JSON(c, http.StatusNotFound, st.Message(), nil)
+			default:
+				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
+			}
+			return
+		}
+		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+		return
+	}
+
+	common.JSON(c, http.StatusOK, "Lấy chi tiết bài viết thành công", gin.H{
+		"post": res,
+	})
+}

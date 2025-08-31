@@ -17,9 +17,11 @@ func ParseToken(tokenStr string, secretKey string) (jwt.MapClaims, error) {
 	if err != nil {
 		return nil, common.ErrInvalidToken
 	}
+
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return claims, nil
 	}
+
 	return nil, common.ErrInvalidToken
 }
 
@@ -28,13 +30,16 @@ func ExtractToken(claims jwt.MapClaims) (string, []string, error) {
 	if !ok {
 		return "", nil, common.ErrUserIdNotFound
 	}
+
 	rawRoles, ok := claims["roles"].([]interface{}) 
 	if !ok {
 		return "", nil, common.ErrRolesNotFound
 	}
+
 	userRoles := make([]string, len(rawRoles)) 
 	for i, r := range rawRoles {
 		userRoles[i] = fmt.Sprintf("%v", r)
 	}
+	
 	return userID, userRoles, nil
 }

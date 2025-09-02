@@ -9,6 +9,7 @@ import (
 	"github.com/SomeHowMicroservice/shm-be/gateway/container"
 	"github.com/SomeHowMicroservice/shm-be/gateway/initialization"
 	"github.com/SomeHowMicroservice/shm-be/gateway/server"
+	"github.com/SomeHowMicroservice/shm-be/gateway/websocket"
 )
 
 var (
@@ -44,7 +45,10 @@ func main() {
 	}
 	defer clients.Close()
 
-	appContainer := container.NewContainer(clients, cfg)
+	hub := websocket.NewHub()
+	go hub.Run()
+
+	appContainer := container.NewContainer(clients, cfg, hub)
 
 	server.RunHTTPServer(cfg, clients, appContainer)
 }

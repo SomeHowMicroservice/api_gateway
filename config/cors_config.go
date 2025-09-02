@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	allowOrigins  = []string{"http://localhost:3000"}
+	allowOrigins  = []string{"http://localhost:3000", "http://127.0.0.1:5500"}
 	allowMethods  = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	allowHeaders  = []string{"Origin", "Content-Type", "Content-Length", "Authorization", "Accept", "Accept-Language"}
 	exposeHeaders = []string{"Content-Length", "X-Request-Id"}

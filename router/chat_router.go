@@ -11,5 +11,6 @@ func ChatRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.Us
 	chat := rg.Group("/chats")
 	{
 		chat.GET("", chatHandler.TestConnect)
+		chat.GET("/ws", chatHandler.ServeWs)
 	}
 }

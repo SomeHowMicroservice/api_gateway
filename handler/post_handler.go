@@ -10,8 +10,6 @@ import (
 	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
 	"github.com/SomeHowMicroservice/shm-be/gateway/request"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type PostHandler struct {
@@ -55,17 +53,7 @@ func (h *PostHandler) CreateTopic(c *gin.Context) {
 		Slug:   slug,
 		UserId: user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -77,17 +65,7 @@ func (h *PostHandler) GetAllTopicsAdmin(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.postClient.GetAllTopicsAdmin(ctx, &postpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -99,12 +77,7 @@ func (h *PostHandler) GetAllTopics(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.postClient.GetAllTopics(ctx, &postpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -116,17 +89,7 @@ func (h *PostHandler) GetDeletedTopics(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.postClient.GetDeletedTopics(ctx, &postpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -163,18 +126,8 @@ func (h *PostHandler) UpdateTopic(c *gin.Context) {
 		Name:   req.Name,
 		Slug:   req.Slug,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
+	}); common.HandleGrpcError(c, err) {
+		return
 	}
 
 	common.JSON(c, http.StatusOK, "Cập nhật chủ đề bài viết thành công", nil)
@@ -201,17 +154,7 @@ func (h *PostHandler) DeleteTopic(c *gin.Context) {
 	if _, err := h.postClient.DeleteTopic(ctx, &postpb.DeleteOneRequest{
 		Id:     topicID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -244,17 +187,7 @@ func (h *PostHandler) DeleteTopics(c *gin.Context) {
 	if _, err := h.postClient.DeleteTopics(ctx, &postpb.DeleteManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -282,17 +215,7 @@ func (h *PostHandler) RestoreTopic(c *gin.Context) {
 	if _, err := h.postClient.RestoreTopic(ctx, &postpb.RestoreOneRequest{
 		Id:     topicID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -325,17 +248,7 @@ func (h *PostHandler) RestoreTopics(c *gin.Context) {
 	if _, err := h.postClient.RestoreTopics(ctx, &postpb.RestoreManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -350,17 +263,7 @@ func (h *PostHandler) PermanentlyDeleteTopic(c *gin.Context) {
 
 	if _, err := h.postClient.PermanentlyDeleteTopic(ctx, &postpb.PermanentlyDeleteOneRequest{
 		Id: topicID,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -380,17 +283,7 @@ func (h *PostHandler) PermanentlyDeleteTopics(c *gin.Context) {
 
 	if _, err := h.postClient.PermanentlyDeleteTopics(ctx, &postpb.PermanentlyDeleteManyRequest{
 		Ids: req.IDs,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -427,19 +320,7 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 		TopicId:     req.TopicID,
 		UserId:      user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -466,12 +347,7 @@ func (h *PostHandler) GetAllPostsAdmin(c *gin.Context) {
 		TopicId:     query.TopicID,
 		IsPublished: query.IsPublished,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -487,17 +363,7 @@ func (h *PostHandler) GetPostByID(c *gin.Context) {
 	res, err := h.postClient.GetPostById(ctx, &postpb.GetOneRequest{
 		Id: postId,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -553,19 +419,7 @@ func (h *PostHandler) UpdatePost(c *gin.Context) {
 		TopicId:     &topicID,
 		IsPublished: &isPublished,
 		UserId:      user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -593,17 +447,7 @@ func (h *PostHandler) DeletePost(c *gin.Context) {
 	if _, err := h.postClient.DeletePost(ctx, &postpb.DeleteOneRequest{
 		Id:     postID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -636,17 +480,7 @@ func (h *PostHandler) DeletePosts(c *gin.Context) {
 	if _, err := h.postClient.DeletePosts(ctx, &postpb.DeleteManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -674,17 +508,7 @@ func (h *PostHandler) RestorePost(c *gin.Context) {
 	if _, err := h.postClient.RestorePost(ctx, &postpb.RestoreOneRequest{
 		Id:     postID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -717,17 +541,7 @@ func (h *PostHandler) RestorePosts(c *gin.Context) {
 	if _, err := h.postClient.RestorePosts(ctx, &postpb.RestoreManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -742,17 +556,7 @@ func (h *PostHandler) PermanentlyDeletePost(c *gin.Context) {
 
 	if _, err := h.postClient.PermanentlyDeletePost(ctx, &postpb.PermanentlyDeleteOneRequest{
 		Id: postID,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -772,17 +576,7 @@ func (h *PostHandler) PermanentlyDeletePosts(c *gin.Context) {
 
 	if _, err := h.postClient.PermanentlyDeletePosts(ctx, &postpb.PermanentlyDeleteManyRequest{
 		Ids: req.IDs,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -809,12 +603,7 @@ func (h *PostHandler) GetDeletedPosts(c *gin.Context) {
 		TopicId:     query.TopicID,
 		IsPublished: query.IsPublished,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -830,17 +619,7 @@ func (h *PostHandler) GetDeletedPostByID(c *gin.Context) {
 	res, err := h.postClient.GetDeletedPostById(ctx, &postpb.GetOneRequest{
 		Id: postID,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 

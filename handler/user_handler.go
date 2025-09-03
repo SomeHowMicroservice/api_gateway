@@ -6,11 +6,9 @@ import (
 	"time"
 
 	"github.com/SomeHowMicroservice/shm-be/gateway/common"
-	"github.com/SomeHowMicroservice/shm-be/gateway/request"
 	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
+	"github.com/SomeHowMicroservice/shm-be/gateway/request"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type UserHandler struct {
@@ -72,17 +70,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		Dob:       dob,
 		UserId:    user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -110,17 +98,7 @@ func (h *UserHandler) MyMeasurements(c *gin.Context) {
 	res, err := h.userClient.GetMeasurementByUserId(ctx, &userpb.GetByUserIdRequest{
 		UserId: user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -179,19 +157,7 @@ func (h *UserHandler) UpdateMeasurement(c *gin.Context) {
 		Butt:   butt,
 		UserId: user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.PermissionDenied:
-				common.JSON(c, http.StatusForbidden, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -219,13 +185,7 @@ func (h *UserHandler) MyAddresses(c *gin.Context) {
 	res, err := h.userClient.GetAddressesByUserId(ctx, &userpb.GetByUserIdRequest{
 		UserId: user.Id,
 	})
-
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -270,13 +230,7 @@ func (h *UserHandler) CreateMyAddress(c *gin.Context) {
 		IsDefault:   isDefault,
 		UserId:      user.Id,
 	})
-
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -324,19 +278,7 @@ func (h *UserHandler) UpdateAddress(c *gin.Context) {
 		IsDefault:   isDefault,
 		UserId:      user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.PermissionDenied:
-				common.JSON(c, http.StatusForbidden, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -363,23 +305,10 @@ func (h *UserHandler) DeleteAddress(c *gin.Context) {
 
 	addressID := c.Param("id")
 
-	_, err := h.userClient.DeleteAddress(ctx, &userpb.DeleteAddressRequest{
+	if _, err := h.userClient.DeleteAddress(ctx, &userpb.DeleteAddressRequest{
 		Id:     addressID,
 		UserId: user.Id,
-	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.PermissionDenied:
-				common.JSON(c, http.StatusForbidden, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 

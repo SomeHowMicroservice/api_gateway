@@ -29,7 +29,7 @@ type PostPaginationQuery struct {
 	Limit       uint32 `form:"limit" binding:"omitempty,min=1,max=100" json:"limit"`
 	Sort        string `form:"sort" json:"sort"`
 	Order       string `form:"order" binding:"omitempty,oneof=asc desc" json:"order"`
-	IsPublished *bool  `form:"is_active" json:"is_published"`
+	IsPublished *bool  `form:"is_published" json:"is_published"`
 	Search      string `form:"search" json:"search"`
 	TopicID     string `form:"topic_id" json:"topic_id" binding:"omitempty,uuid4"`
 }

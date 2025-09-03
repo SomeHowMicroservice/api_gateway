@@ -7,12 +7,10 @@ import (
 
 	"github.com/SomeHowMicroservice/shm-be/gateway/common"
 	"github.com/SomeHowMicroservice/shm-be/gateway/config"
-	"github.com/SomeHowMicroservice/shm-be/gateway/request"
 	authpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/auth"
 	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
+	"github.com/SomeHowMicroservice/shm-be/gateway/request"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type AuthHandler struct {
@@ -43,19 +41,7 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 		Email:    req.Email,
 		Password: req.Password,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			case codes.InvalidArgument:
-				common.JSON(c, http.StatusBadRequest, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -79,21 +65,7 @@ func (h *AuthHandler) VerifySignUp(c *gin.Context) {
 		RegistrationToken: req.RegistrationToken,
 		Otp:               req.Otp,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.InvalidArgument:
-				common.JSON(c, http.StatusBadRequest, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -120,21 +92,7 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 		Username: req.Username,
 		Password: req.Password,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.InvalidArgument:
-				common.JSON(c, http.StatusBadRequest, st.Message(), nil)
-			case codes.PermissionDenied:
-				common.JSON(c, http.StatusForbidden, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -173,7 +131,7 @@ func (h *AuthHandler) GetMe(c *gin.Context) {
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
-	// Lấy UserID từ Context ra
+
 	userIDAny, exists := c.Get("user_id")
 	if !exists {
 		common.JSON(c, http.StatusUnauthorized, "không có id người dùng", nil)
@@ -184,7 +142,7 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi id người dùng", nil)
 		return
 	}
-	// Lấy User Roles từ Context ra
+
 	userRolesAny, exists := c.Get("user_roles")
 	if !exists {
 		common.JSON(c, http.StatusUnauthorized, "không có các quyền người dùng", nil)
@@ -199,12 +157,7 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 		Id:    userID,
 		Roles: userRoles,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -238,19 +191,7 @@ func (h *AuthHandler) ChangePassword(c *gin.Context) {
 		OldPassword: req.OldPassword,
 		NewPassword: req.NewPassword,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.InvalidArgument:
-				common.JSON(c, http.StatusBadRequest, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -274,17 +215,7 @@ func (h *AuthHandler) ForgotPassword(c *gin.Context) {
 	res, err := h.authClient.ForgotPassword(ctx, &authpb.ForgotPasswordRequest{
 		Email: req.Email,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -308,19 +239,7 @@ func (h *AuthHandler) VerifyForgotPassword(c *gin.Context) {
 		ForgotPasswordToken: req.ForgotPasswordToken,
 		Otp:                 req.Otp,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.InvalidArgument:
-				common.JSON(c, http.StatusBadRequest, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -340,21 +259,10 @@ func (h *AuthHandler) ResetPassword(c *gin.Context) {
 		return
 	}
 
-	_, err := h.authClient.ResetPassword(ctx, &authpb.ResetPasswordRequest{
+	if _, err := h.authClient.ResetPassword(ctx, &authpb.ResetPasswordRequest{
 		ResetPasswordToken: req.ResetPasswordToken,
 		NewPassword:        req.NewPassword,
-	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -376,21 +284,7 @@ func (h *AuthHandler) AdminSignIn(c *gin.Context) {
 		Username: req.Username,
 		Password: req.Password,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.InvalidArgument:
-				common.JSON(c, http.StatusBadRequest, st.Message(), nil)
-			case codes.PermissionDenied:
-				common.JSON(c, http.StatusForbidden, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 

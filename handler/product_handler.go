@@ -11,14 +11,11 @@ import (
 	"time"
 
 	"github.com/SomeHowMicroservice/shm-be/gateway/common"
-	"github.com/SomeHowMicroservice/shm-be/gateway/request"
 	productpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/product"
-	"github.com/go-playground/validator/v10"
-
 	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
+	"github.com/SomeHowMicroservice/shm-be/gateway/request"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/go-playground/validator/v10"
 )
 
 type ProductHandler struct {
@@ -63,19 +60,7 @@ func (h *ProductHandler) CreateCategory(c *gin.Context) {
 		ParentIds: req.ParentIDs,
 		UserId:    user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -87,12 +72,7 @@ func (h *ProductHandler) GetCategoryTree(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetCategoryTree(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -104,12 +84,7 @@ func (h *ProductHandler) GetCategoriesNoChild(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetCategoriesNoChild(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -341,19 +316,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		Images:      images,
 		UserId:      user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -720,19 +683,7 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 		NewImages:        newImages,
 		UserId:           user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -750,17 +701,7 @@ func (h *ProductHandler) GetProductBySlug(c *gin.Context) {
 	res, err := h.productClient.GetProductBySlug(ctx, &productpb.GetProductBySlugRequest{
 		Slug: productSlug,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -796,17 +737,7 @@ func (h *ProductHandler) CreateColor(c *gin.Context) {
 		Name:   req.Name,
 		UserId: user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -840,17 +771,7 @@ func (h *ProductHandler) CreateSize(c *gin.Context) {
 		Name:   req.Name,
 		UserId: user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -866,17 +787,7 @@ func (h *ProductHandler) GetProductsByCategory(c *gin.Context) {
 	res, err := h.productClient.GetProductsByCategory(ctx, &productpb.GetProductsByCategoryRequest{
 		Slug: categorySlug,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -910,17 +821,7 @@ func (h *ProductHandler) CreateTag(c *gin.Context) {
 		Name:   req.Name,
 		UserId: user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -932,17 +833,7 @@ func (h *ProductHandler) GetAllCategoriesAdmin(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetAllCategoriesAdmin(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -954,12 +845,7 @@ func (h *ProductHandler) GetCategoriesNoProduct(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetCategoriesNoProduct(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -975,17 +861,7 @@ func (h *ProductHandler) CategoryAdminDetails(c *gin.Context) {
 	res, err := h.productClient.GetCategoryById(ctx, &productpb.GetOneRequest{
 		Id: categoryID,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1026,17 +902,7 @@ func (h *ProductHandler) UpdateCategory(c *gin.Context) {
 		ParentIds: req.ParentIDs,
 		UserId:    user.Id,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1050,17 +916,7 @@ func (h *ProductHandler) GetAllColorsAdmin(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetAllColorsAdmin(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1072,12 +928,7 @@ func (h *ProductHandler) GetAllColors(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetAllColors(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1089,17 +940,7 @@ func (h *ProductHandler) GetAllSizesAdmin(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetAllSizesAdmin(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1111,12 +952,7 @@ func (h *ProductHandler) GetAllSizes(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetAllSizes(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1128,17 +964,7 @@ func (h *ProductHandler) GetAllTagsAdmin(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetAllTagsAdmin(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1150,12 +976,7 @@ func (h *ProductHandler) GetAllTags(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetAllTags(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1191,19 +1012,7 @@ func (h *ProductHandler) UpdateTag(c *gin.Context) {
 		Id:     tagID,
 		Name:   req.Name,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1219,17 +1028,7 @@ func (h *ProductHandler) GetProductByID(c *gin.Context) {
 	res, err := h.productClient.GetProductById(ctx, &productpb.GetOneRequest{
 		Id: productID,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1258,12 +1057,7 @@ func (h *ProductHandler) GetAllProductsAdmin(c *gin.Context) {
 		Search:     query.Search,
 		CategoryId: query.CategoryID,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1291,17 +1085,7 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	if _, err := h.productClient.DeleteProduct(ctx, &productpb.DeleteOneRequest{
 		Id:     productID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1334,17 +1118,7 @@ func (h *ProductHandler) DeleteProducts(c *gin.Context) {
 	if _, err := h.productClient.DeleteProducts(ctx, &productpb.DeleteManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1359,17 +1133,7 @@ func (h *ProductHandler) PermanentlyDeleteCategory(c *gin.Context) {
 
 	if _, err := h.productClient.PermanentlyDeleteCategory(ctx, &productpb.PermanentlyDeleteOneRequest{
 		Id: categoryID,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1389,17 +1153,7 @@ func (h *ProductHandler) PermanentlyDeleteCategories(c *gin.Context) {
 
 	if _, err := h.productClient.PermanentlyDeleteCategories(ctx, &productpb.PermanentlyDeleteManyRequest{
 		Ids: req.IDs,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1435,19 +1189,7 @@ func (h *ProductHandler) UpdateColor(c *gin.Context) {
 		Id:     colorID,
 		Name:   req.Name,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1483,22 +1225,9 @@ func (h *ProductHandler) UpdateSize(c *gin.Context) {
 		Id:     sizeID,
 		Name:   req.Name,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			case codes.AlreadyExists:
-				common.JSON(c, http.StatusConflict, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
-
 	common.JSON(c, http.StatusOK, "Cập nhật kích cỡ sản phẩm thành công", nil)
 }
 
@@ -1523,17 +1252,7 @@ func (h *ProductHandler) DeleteColor(c *gin.Context) {
 	if _, err := h.productClient.DeleteColor(ctx, &productpb.DeleteOneRequest{
 		Id:     colorID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1561,17 +1280,7 @@ func (h *ProductHandler) DeleteSize(c *gin.Context) {
 	if _, err := h.productClient.DeleteSize(ctx, &productpb.DeleteOneRequest{
 		Id:     sizeID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1604,17 +1313,7 @@ func (h *ProductHandler) DeleteColors(c *gin.Context) {
 	if _, err := h.productClient.DeleteColors(ctx, &productpb.DeleteManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1647,17 +1346,7 @@ func (h *ProductHandler) DeleteSizes(c *gin.Context) {
 	if _, err := h.productClient.DeleteSizes(ctx, &productpb.DeleteManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1684,12 +1373,7 @@ func (h *ProductHandler) GetDeletedProducts(c *gin.Context) {
 		Search:     query.Search,
 		CategoryId: query.CategoryID,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1705,17 +1389,7 @@ func (h *ProductHandler) GetDeletedProductByID(c *gin.Context) {
 	res, err := h.productClient.GetDeletedProductById(ctx, &productpb.GetOneRequest{
 		Id: productID,
 	})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1729,17 +1403,7 @@ func (h *ProductHandler) GetDeletedColors(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetDeletedColors(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1751,17 +1415,7 @@ func (h *ProductHandler) GetDeletedSizes(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetDeletedSizes(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1773,17 +1427,7 @@ func (h *ProductHandler) GetDeletedTags(c *gin.Context) {
 	defer cancel()
 
 	res, err := h.productClient.GetDeletedTags(ctx, &productpb.GetAllRequest{})
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1811,17 +1455,7 @@ func (h *ProductHandler) DeleteTag(c *gin.Context) {
 	if _, err := h.productClient.DeleteTag(ctx, &productpb.DeleteOneRequest{
 		Id:     tagID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1854,17 +1488,7 @@ func (h *ProductHandler) DeleteTags(c *gin.Context) {
 	if _, err := h.productClient.DeleteTags(ctx, &productpb.DeleteManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1892,17 +1516,7 @@ func (h *ProductHandler) RestoreProduct(c *gin.Context) {
 	if _, err := h.productClient.RestoreProduct(ctx, &productpb.RestoreOneRequest{
 		Id:     productID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1935,17 +1549,7 @@ func (h *ProductHandler) RestoreProducts(c *gin.Context) {
 	if _, err := h.productClient.RestoreProducts(ctx, &productpb.RestoreManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -1973,17 +1577,7 @@ func (h *ProductHandler) RestoreColor(c *gin.Context) {
 	if _, err := h.productClient.RestoreColor(ctx, &productpb.RestoreOneRequest{
 		Id:     colorID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2016,17 +1610,7 @@ func (h *ProductHandler) RestoreColors(c *gin.Context) {
 	if _, err := h.productClient.RestoreColors(ctx, &productpb.RestoreManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2054,17 +1638,7 @@ func (h *ProductHandler) RestoreSize(c *gin.Context) {
 	if _, err := h.productClient.RestoreSize(ctx, &productpb.RestoreOneRequest{
 		Id:     sizeID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2097,17 +1671,7 @@ func (h *ProductHandler) RestoreSizes(c *gin.Context) {
 	if _, err := h.productClient.RestoreSizes(ctx, &productpb.RestoreManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2135,17 +1699,7 @@ func (h *ProductHandler) RestoreTag(c *gin.Context) {
 	if _, err := h.productClient.RestoreTag(ctx, &productpb.RestoreOneRequest{
 		Id:     tagID,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2178,17 +1732,7 @@ func (h *ProductHandler) RestoreTags(c *gin.Context) {
 	if _, err := h.productClient.RestoreTags(ctx, &productpb.RestoreManyRequest{
 		Ids:    req.IDs,
 		UserId: user.Id,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2203,17 +1747,7 @@ func (h *ProductHandler) PermanentlyDeleteProduct(c *gin.Context) {
 
 	if _, err := h.productClient.PermanentlyDeleteProduct(ctx, &productpb.PermanentlyDeleteOneRequest{
 		Id: productID,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2233,17 +1767,7 @@ func (h *ProductHandler) PermanentlyDeleteProducts(c *gin.Context) {
 
 	if _, err := h.productClient.PermanentlyDeleteProducts(ctx, &productpb.PermanentlyDeleteManyRequest{
 		Ids: req.IDs,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2258,17 +1782,7 @@ func (h *ProductHandler) PermanentlyDeleteColor(c *gin.Context) {
 
 	if _, err := h.productClient.PermanentlyDeleteColor(ctx, &productpb.PermanentlyDeleteOneRequest{
 		Id: colorID,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2288,17 +1802,7 @@ func (h *ProductHandler) PermanentlyDeleteColors(c *gin.Context) {
 
 	if _, err := h.productClient.PermanentlyDeleteColors(ctx, &productpb.PermanentlyDeleteManyRequest{
 		Ids: req.IDs,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2313,17 +1817,7 @@ func (h *ProductHandler) PermanentlyDeleteSize(c *gin.Context) {
 
 	if _, err := h.productClient.PermanentlyDeleteSize(ctx, &productpb.PermanentlyDeleteOneRequest{
 		Id: sizeID,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2343,17 +1837,7 @@ func (h *ProductHandler) PermanentlyDeleteSizes(c *gin.Context) {
 
 	if _, err := h.productClient.PermanentlyDeleteSizes(ctx, &productpb.PermanentlyDeleteManyRequest{
 		Ids: req.IDs,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2368,17 +1852,7 @@ func (h *ProductHandler) PermanentlyDeleteTag(c *gin.Context) {
 
 	if _, err := h.productClient.PermanentlyDeleteTag(ctx, &productpb.PermanentlyDeleteOneRequest{
 		Id: tagID,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 
@@ -2398,17 +1872,7 @@ func (h *ProductHandler) PermanentlyDeleteTags(c *gin.Context) {
 
 	if _, err := h.productClient.PermanentlyDeleteTags(ctx, &productpb.PermanentlyDeleteManyRequest{
 		Ids: req.IDs,
-	}); err != nil {
-		if st, ok := status.FromError(err); ok {
-			switch st.Code() {
-			case codes.NotFound:
-				common.JSON(c, http.StatusNotFound, st.Message(), nil)
-			default:
-				common.JSON(c, http.StatusInternalServerError, st.Message(), nil)
-			}
-			return
-		}
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 

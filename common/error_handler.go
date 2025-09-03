@@ -4,8 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func HandleValidationError(err error) string {
@@ -49,4 +53,29 @@ func HandleValidationError(err error) string {
 	}
 
 	return "Dữ liệu không hợp lệ"
+}
+
+func HandleGrpcError(c *gin.Context, err error) bool {
+	if err == nil {
+		return false
+	}
+
+	if st, ok := status.FromError(err); ok {
+		switch st.Code() {
+		case codes.NotFound:
+			JSON(c, http.StatusNotFound, st.Message(), nil)
+		case codes.AlreadyExists:
+			JSON(c, http.StatusConflict, st.Message(), nil)
+		case codes.InvalidArgument:
+			JSON(c, http.StatusBadRequest, st.Message(), nil)
+		case codes.PermissionDenied:
+			JSON(c, http.StatusForbidden, st.Message(), nil)
+		default:
+			JSON(c, http.StatusInternalServerError, st.Message(), nil)
+		}
+		return true
+	}
+
+	JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	return true
 }

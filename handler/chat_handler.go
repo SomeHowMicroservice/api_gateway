@@ -38,8 +38,7 @@ func (h *ChatHandler) TestConnect(c *gin.Context) {
 
 	if _, err := h.chatClient.SendMessage(ctx, &chatpb.SendMessageRequest{
 		Message: "Hello World!!!",
-	}); err != nil {
-		common.JSON(c, http.StatusInternalServerError, err.Error(), nil)
+	}); common.HandleGrpcError(c, err) {
 		return
 	}
 

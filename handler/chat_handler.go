@@ -7,6 +7,7 @@ import (
 
 	"github.com/SomeHowMicroservice/shm-be/gateway/common"
 	chatpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/chat"
+	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
 	customWs "github.com/SomeHowMicroservice/shm-be/gateway/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -32,17 +33,28 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func (h *ChatHandler) TestConnect(c *gin.Context) {
+func (h *ChatHandler) MyConversation(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	if _, err := h.chatClient.SendMessage(ctx, &chatpb.SendMessageRequest{
-		Message: "Hello World!!!",
-	}); common.HandleGrpcError(c, err) {
+	userAny, exists := c.Get("user")
+	if !exists {
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	common.JSON(c, http.StatusCreated, "Gửi tin nhắn thành công", nil)
+	user := userAny.(*userpb.UserPublicResponse)
+
+	res, err := h.chatClient.GetConversationByUserId(ctx, &chatpb.GetByUserIdRequest{
+		UserId: user.Id,
+	})
+	if common.HandleGrpcError(c, err) {
+		return
+	}
+
+	common.JSON(c, http.StatusOK, "Lấy thông tin cuộc trò chuyện thành công", gin.H{
+		"conversation": res,
+	})
 }
 
 func (h *ChatHandler) ServeWs(c *gin.Context) {

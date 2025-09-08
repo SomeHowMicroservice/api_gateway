@@ -18,7 +18,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 		tokenStr, err := c.Cookie(refreshName)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
-				Message: "Không tìm thấy token làm mới",
+				Message: common.ErrUnAuth.Error(),
 			})
 			return
 		}
@@ -58,7 +58,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 
 		if !slices.Equal(userRes.Roles, userRoles) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
-				Message: "người dùng không hợp lệ",
+				Message: common.ErrInvalidUser.Error(),
 			})
 			return
 		}
@@ -74,7 +74,7 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 		tokenStr, err := c.Cookie(accessName)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
-				Message: "Không tìm thấy token",
+				Message: common.ErrUnAuth.Error(),
 			})
 			return
 		}
@@ -114,40 +114,61 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 
 		if !slices.Equal(userRes.Roles, userRoles) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
-				Message: "người dùng không hợp lệ",
+				Message: common.ErrInvalidUser.Error(),
 			})
 			return
 		}
 
 		if !hasRoleUser(common.RoleUser, userRes.Roles) {
 			c.AbortWithStatusJSON(http.StatusForbidden, common.ApiResponse{
-				Message: "không có quyền truy cập",
+				Message: common.ErrForbidden.Error(),
 			})
 			return
 		}
 
-		c.Set(common.RoleUser, userRes)
+		c.Set("user", userRes)
 		c.Next()
 	}
 }
 
 func RequireMultiRoles(allowedRoles []string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userAny, exists := c.Get(common.RoleUser)
+		userAny, exists := c.Get("user")
 		if !exists {
-			common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+				Message: common.ErrUnAuth.Error(),
+			})
 			return
 		}
 
-		user, ok := userAny.(*userpb.UserPublicResponse)
-		if !ok {
-			common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-			return
-		}
+		user := userAny.(*userpb.UserPublicResponse)
 
 		if !hasAtLeastOneRole(user.Roles, allowedRoles) {
 			c.AbortWithStatusJSON(http.StatusForbidden, common.ApiResponse{
-				Message: "không có quyền truy cập",
+				Message: common.ErrForbidden.Error(),
+			})
+			return
+		}
+
+		c.Next()
+	}
+}
+
+func RequireSingleRole() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userAny, exists := c.Get("user")
+		if !exists {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+				Message: common.ErrUnAuth.Error(),
+			})
+			return
+		}
+
+		user := userAny.(*userpb.UserPublicResponse)
+
+		if len(user.Roles) > 1 {
+			c.AbortWithStatusJSON(http.StatusForbidden, common.ApiResponse{
+				Message: common.ErrForbidden.Error(),
 			})
 			return
 		}

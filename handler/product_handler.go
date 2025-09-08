@@ -32,15 +32,11 @@ func (h *ProductHandler) CreateCategory(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.CreateCategoryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -92,20 +88,16 @@ func (h *ProductHandler) GetCategoriesNoChild(c *gin.Context) {
 }
 
 func (h *ProductHandler) CreateProduct(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 20*time.Second)
 	defer cancel()
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	if err := c.Request.ParseMultipartForm(32 << 20); err != nil {
 		common.JSON(c, http.StatusBadRequest, "Không thể parse form", nil)
@@ -324,20 +316,16 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 }
 
 func (h *ProductHandler) UpdateProduct(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 20*time.Second)
 	defer cancel()
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	productID := c.Param("id")
 
@@ -716,15 +704,11 @@ func (h *ProductHandler) CreateColor(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.CreateColorRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -750,15 +734,11 @@ func (h *ProductHandler) CreateSize(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.CreateSizeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -800,15 +780,11 @@ func (h *ProductHandler) CreateTag(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.CreateTagRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -876,15 +852,11 @@ func (h *ProductHandler) UpdateCategory(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	categoryID := c.Param("id")
 
@@ -989,15 +961,11 @@ func (h *ProductHandler) UpdateTag(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	tagID := c.Param("id")
 
@@ -1070,15 +1038,11 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	productID := c.Param("id")
 
@@ -1098,15 +1062,11 @@ func (h *ProductHandler) DeleteProducts(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.DeleteManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -1166,15 +1126,11 @@ func (h *ProductHandler) UpdateColor(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.UpdateColorRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -1202,15 +1158,11 @@ func (h *ProductHandler) UpdateSize(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.UpdateSizeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -1237,15 +1189,11 @@ func (h *ProductHandler) DeleteColor(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	colorID := c.Param("id")
 
@@ -1265,15 +1213,11 @@ func (h *ProductHandler) DeleteSize(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	sizeID := c.Param("id")
 
@@ -1293,15 +1237,11 @@ func (h *ProductHandler) DeleteColors(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.DeleteManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -1326,15 +1266,11 @@ func (h *ProductHandler) DeleteSizes(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.DeleteManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -1440,15 +1376,11 @@ func (h *ProductHandler) DeleteTag(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	tagID := c.Param("id")
 
@@ -1468,15 +1400,11 @@ func (h *ProductHandler) DeleteTags(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.DeleteManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -1501,15 +1429,11 @@ func (h *ProductHandler) RestoreProduct(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	productID := c.Param("id")
 
@@ -1529,15 +1453,11 @@ func (h *ProductHandler) RestoreProducts(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.RestoreManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -1562,15 +1482,11 @@ func (h *ProductHandler) RestoreColor(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	colorID := c.Param("id")
 
@@ -1590,15 +1506,11 @@ func (h *ProductHandler) RestoreColors(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.RestoreManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -1623,15 +1535,11 @@ func (h *ProductHandler) RestoreSize(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	sizeID := c.Param("id")
 
@@ -1651,15 +1559,11 @@ func (h *ProductHandler) RestoreSizes(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.RestoreManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -1684,15 +1588,11 @@ func (h *ProductHandler) RestoreTag(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	tagID := c.Param("id")
 
@@ -1712,15 +1612,11 @@ func (h *ProductHandler) RestoreTags(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.RestoreManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -1755,7 +1651,7 @@ func (h *ProductHandler) PermanentlyDeleteProduct(c *gin.Context) {
 }
 
 func (h *ProductHandler) PermanentlyDeleteProducts(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
 	defer cancel()
 
 	var req request.DeleteManyRequest

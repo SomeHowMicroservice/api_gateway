@@ -1,23 +1,15 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/common"
 	"github.com/SomeHowMicroservice/shm-be/gateway/config"
-	"github.com/SomeHowMicroservice/shm-be/gateway/container"
-	"github.com/SomeHowMicroservice/shm-be/gateway/initialization"
 	"github.com/SomeHowMicroservice/shm-be/gateway/server"
-	"github.com/SomeHowMicroservice/shm-be/gateway/websocket"
-)
-
-var (
-	authAddr    = "localhost:8081"
-	userAddr    = "localhost:8082"
-	productAddr = "localhost:8083"
-	postAddr    = "localhost:8084"
-	chatAddr    = "localhost:8085"
 )
 
 func main() {
@@ -26,29 +18,18 @@ func main() {
 		log.Fatalf("Tải cấu hình Gateway thất bại: %v", err)
 	}
 
-	authAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.AuthPort)
-	userAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.UserPort)
-	productAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.ProductPort)
-	postAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.PostPort)
-	chatAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.ChatPort)
-	
-	ca := &common.ClientAddresses{
-		AuthAddr:    authAddr,
-		UserAddr:    userAddr,
-		ProductAddr: productAddr,
-		PostAddr:    postAddr,
-		ChatAddr:    chatAddr,
-	}
-	clients, err := initialization.InitClients(ca)
+	server, err := server.NewServer(cfg)
 	if err != nil {
-		log.Fatalf("Kết nối tới các dịch vụ khác thất bại: %v", err)
+		log.Fatalf("Khởi tạo service thất bại: %v", err)
 	}
-	defer clients.Close()
 
-	hub := websocket.NewHub()
-	go hub.Run()
+	server.Start()
 
-	appContainer := container.NewContainer(clients, cfg, hub)
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 
-	server.RunHTTPServer(cfg, clients, appContainer)
+	<-stop
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	server.Shutdown(ctx)
 }

@@ -12,6 +12,7 @@ type Client struct {
 	Conn   *websocket.Conn
 	Send   chan []byte
 	UserID string
+	ConversationID string
 }
 
 func (c *Client) ReadPump() {
@@ -29,7 +30,7 @@ func (c *Client) ReadPump() {
 	for {
 		_, message, err := c.Conn.ReadMessage()
 		if err != nil {
-			log.Println("Đọc:", err)
+			log.Println("Đọc tin nhắn thất bại: ", err)
 			break
 		}
 		c.Hub.Broadcast <- message

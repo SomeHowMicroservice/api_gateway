@@ -4,13 +4,46 @@ package chat;
 option go_package = ".";
 
 service ChatService {
-  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+  rpc GetConversationByUserId(GetByUserIdRequest) returns (ConversationResponse);
+
+  rpc CreateMessage(CreateMessageRequest) returns (MessageResponse);
 }
 
-message SendMessageRequest {
-  string message = 1;
+message CreateMessageRequest {
+  string conversation_id = 1;
+  string sender_id = 2;
+  string sender_role = 3;
+  optional string content = 4;
+  optional string base64_data = 5;
 }
 
-message SendMessageResponse {
-  bool ok = 1;
+message CreateConversationRequest {
+  string user_id = 1;
+}
+
+message GetByUserIdRequest {
+  string user_id = 1;
+}
+
+message SimpleImageResponse {
+  string id = 1;
+  string url = 2;
+}
+
+message MessageResponse {
+  string id = 1;
+  string sender_id = 2;
+  string sender_role = 3;
+  optional string content = 4;
+  optional SimpleImageResponse image = 5;
+  optional bool is_read = 6;
+  optional string read_at = 7;
+  string created_at = 8;
+}
+
+message ConversationResponse {
+  string id = 1;
+  string customer_id = 2;
+  repeated string staff_ids = 3;
+  repeated MessageResponse messages = 4;
 }

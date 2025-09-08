@@ -25,15 +25,11 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.UpdateProfileRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -85,15 +81,11 @@ func (h *UserHandler) MyMeasurements(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	res, err := h.userClient.GetMeasurementByUserId(ctx, &userpb.GetByUserIdRequest{
 		UserId: user.Id,
@@ -120,15 +112,11 @@ func (h *UserHandler) UpdateMeasurement(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	measurementID := c.Param("id")
 	var height, weight, chest, waist, butt int32
@@ -172,15 +160,11 @@ func (h *UserHandler) MyAddresses(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	res, err := h.userClient.GetAddressesByUserId(ctx, &userpb.GetByUserIdRequest{
 		UserId: user.Id,
@@ -198,15 +182,11 @@ func (h *UserHandler) CreateMyAddress(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
-	user, ok := userAny.(*userpb.UserPublicResponse)
 
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.CreateMyAddressRequest
 
@@ -245,15 +225,11 @@ func (h *UserHandler) UpdateAddress(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	addressID := c.Param("id")
 	var req request.UpdateAddressRequest
@@ -293,15 +269,11 @@ func (h *UserHandler) DeleteAddress(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	addressID := c.Param("id")
 

@@ -114,14 +114,11 @@ func (h *AuthHandler) SignOut(c *gin.Context) {
 func (h *AuthHandler) GetMe(c *gin.Context) {
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+
+	user := userAny.(*userpb.UserPublicResponse)
 
 	common.JSON(c, http.StatusOK, "Lấy thông tin người dùng thành công", gin.H{
 		"user": ToAuthResponse(user),
@@ -134,25 +131,19 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 
 	userIDAny, exists := c.Get("user_id")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có id người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUserIdNotFound.Error(), nil)
 		return
 	}
-	userID, ok := userIDAny.(string)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi id người dùng", nil)
-		return
-	}
+	userID := userIDAny.(string)
 
 	userRolesAny, exists := c.Get("user_roles")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có các quyền người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrRolesNotFound.Error(), nil)
 		return
 	}
-	userRoles, ok := userRolesAny.([]string)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển các quyền người dùng", nil)
-		return
-	}
+
+	userRoles := userRolesAny.([]string)
+
 	res, err := h.authClient.RefreshToken(ctx, &authpb.RefreshTokenRequest{
 		Id:    userID,
 		Roles: userRoles,
@@ -170,16 +161,15 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 func (h *AuthHandler) ChangePassword(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
+
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+
+	user := userAny.(*userpb.UserPublicResponse)
+
 	var req request.ChangePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		message := common.HandleValidationError(err)

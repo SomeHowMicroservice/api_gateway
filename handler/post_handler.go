@@ -26,15 +26,11 @@ func (h *PostHandler) CreateTopic(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.CreateTopicRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -102,15 +98,11 @@ func (h *PostHandler) UpdateTopic(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.UpdateTopic
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -139,15 +131,11 @@ func (h *PostHandler) DeleteTopic(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	topicID := c.Param("id")
 
@@ -167,15 +155,11 @@ func (h *PostHandler) DeleteTopics(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.DeleteManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -200,15 +184,11 @@ func (h *PostHandler) RestoreTopic(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	topicID := c.Param("id")
 
@@ -228,15 +208,11 @@ func (h *PostHandler) RestoreTopics(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.RestoreManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -296,15 +272,11 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.CreatePostRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -378,15 +350,11 @@ func (h *PostHandler) UpdatePost(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.UpdatePostRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -432,15 +400,11 @@ func (h *PostHandler) DeletePost(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	postID := c.Param("id")
 
@@ -460,15 +424,11 @@ func (h *PostHandler) DeletePosts(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.DeleteManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -493,15 +453,11 @@ func (h *PostHandler) RestorePost(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	postID := c.Param("id")
 
@@ -521,15 +477,11 @@ func (h *PostHandler) RestorePosts(c *gin.Context) {
 
 	userAny, exists := c.Get("user")
 	if !exists {
-		common.JSON(c, http.StatusUnauthorized, "không có thông tin người dùng", nil)
+		common.JSON(c, http.StatusUnauthorized, common.ErrUnAuth.Error(), nil)
 		return
 	}
 
-	user, ok := userAny.(*userpb.UserPublicResponse)
-	if !ok {
-		common.JSON(c, http.StatusUnauthorized, "không thể chuyển đổi thông tin người dùng", nil)
-		return
-	}
+	user := userAny.(*userpb.UserPublicResponse)
 
 	var req request.RestoreManyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

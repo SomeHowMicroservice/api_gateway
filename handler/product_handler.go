@@ -88,7 +88,7 @@ func (h *ProductHandler) GetCategoriesNoChild(c *gin.Context) {
 }
 
 func (h *ProductHandler) CreateProduct(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(c.Request.Context(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
 	defer cancel()
 
 	userAny, exists := c.Get("user")
@@ -316,7 +316,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 }
 
 func (h *ProductHandler) UpdateProduct(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(c.Request.Context(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
 	defer cancel()
 
 	userAny, exists := c.Get("user")
@@ -1651,7 +1651,7 @@ func (h *ProductHandler) PermanentlyDeleteProduct(c *gin.Context) {
 }
 
 func (h *ProductHandler) PermanentlyDeleteProducts(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
 	var req request.DeleteManyRequest

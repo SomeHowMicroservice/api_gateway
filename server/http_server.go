@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/SomeHowMicroservice/shm-be/gateway/config"
 	"github.com/SomeHowMicroservice/shm-be/gateway/container"
@@ -11,11 +10,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RunHTTPServer(cfg *config.AppConfig, clients *initialization.GRPCClients, appContainer *container.Container) {
+func RunHTTPServer(cfg *config.AppConfig, clients *initialization.GRPCClients, appContainer *container.Container) error {
 	r := gin.Default()
 
 	if err := r.SetTrustedProxies([]string{"127.0.0.1"}); err != nil {
-		log.Fatalf("Thiết lập Proxy thất bại: %v", err)
+		return fmt.Errorf("thiết lập Proxy thất bại: %w", err)
 	}
 
 	config.CORSConfig(r)
@@ -28,7 +27,5 @@ func RunHTTPServer(cfg *config.AppConfig, clients *initialization.GRPCClients, a
 	router.ChatRouter(api, cfg, clients.UserClient, appContainer.Chat.Handler)
 
 	addr := fmt.Sprintf(":%d", cfg.App.HttpPort)
-	if err := r.Run(addr); err != nil {
-		log.Fatalf("Chạy http server thất bại: %v", err)
-	}
+	return r.Run(addr)
 }

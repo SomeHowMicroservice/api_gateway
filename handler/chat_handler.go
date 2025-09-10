@@ -64,12 +64,7 @@ func (h *ChatHandler) ServeWs(c *gin.Context) {
 		return
 	}
 
-	client := &customWs.Client{
-		Hub:    h.hub,
-		Conn:   conn,
-		Send:   make(chan []byte, 256),
-		UserID: c.Query("user_id"),
-	}
+	client := customWs.NewClient(h.hub, conn, c.Query("conversation_id"))
 
 	h.hub.Register <- client
 

@@ -60,9 +60,8 @@ func NewServer(cfg *config.AppConfig) (*Server, error) {
 	}, nil
 }
 
-func (s *Server) Start() {
-	go RunHTTPServer(s.cfg, s.clients, s.appContainer)
-	log.Println("Chạy service thành công")
+func (s *Server) Start() error {
+	return RunHTTPServer(s.cfg, s.clients, s.appContainer)
 }
 
 func (s *Server) Shutdown(ctx context.Context) {
@@ -73,8 +72,10 @@ func (s *Server) Shutdown(ctx context.Context) {
 	}
 
 	if s.hub != nil {
-		for client := range s.hub.Clients {
-			close(client.Send)
+		for _, clients := range s.hub.Conversations {
+			for client := range clients {
+				close(client.Send)
+			}
 		}
 	}
 

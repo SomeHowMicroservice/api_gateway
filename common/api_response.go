@@ -8,7 +8,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func JSON(c *gin.Context, statusCode int, message string, data interface{}) {
+func JSON(c *gin.Context, statusCode int, message string, data any) {
 	if pb, ok := data.(proto.Message); ok {
 		marshaler := protojson.MarshalOptions{
 			EmitUnpopulated: true, 

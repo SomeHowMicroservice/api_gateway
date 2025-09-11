@@ -2,8 +2,10 @@ package container
 
 import (
 	"github.com/SomeHowMicroservice/shm-be/gateway/config"
+	"github.com/SomeHowMicroservice/shm-be/gateway/event"
+	"github.com/SomeHowMicroservice/shm-be/gateway/handler"
 	"github.com/SomeHowMicroservice/shm-be/gateway/initialization"
-	"github.com/SomeHowMicroservice/shm-be/gateway/websocket"
+	"github.com/SomeHowMicroservice/shm-be/gateway/socket"
 )
 
 type Container struct {
@@ -12,19 +14,22 @@ type Container struct {
 	Product *ProductContainer
 	Post    *PostContainer
 	Chat    *ChatContainer
+	SSEHandler *handler.SSEHandler
 }
 
-func NewContainer(cs *initialization.GRPCClients, cfg *config.AppConfig, hub *websocket.Hub) *Container {
+func NewContainer(cs *initialization.GRPCClients, cfg *config.AppConfig, hub *socket.Hub, manager *event.Manager) *Container {
 	auth := NewAuthContainer(cs.AuthClient, cfg)
 	user := NewUserContainer(cs.UserClient)
 	product := NewProductHandler(cs.ProductClient)
 	post := NewPostContainer(cs.PostClient)
 	chat := NewChatContainer(cs.ChatClient, hub)
+	sseHandler := handler.NewSSEHandler(manager, cs.UserClient)
 	return &Container{
 		auth,
 		user,
 		product,
 		post,
 		chat,
+		sseHandler,
 	}
 }

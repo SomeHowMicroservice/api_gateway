@@ -1,4 +1,4 @@
-package websocket
+package socket
 
 import (
 	"log"
@@ -8,16 +8,12 @@ import (
 )
 
 const (
-	// Thời gian chờ để ghi tin nhắn đến peer.
 	writeWait = 10 * time.Second
 
-	// Thời gian chờ để đọc tin nhắn tiếp theo từ peer.
 	pongWait = 60 * time.Second
 
-	// Gửi pings đến peer với khoảng thời gian này. Phải nhỏ hơn pongWait.
 	pingPeriod = (pongWait * 9) / 10
 
-	// Kích thước buffer tối đa cho tin nhắn.
 	maxMessageSize = 512
 )
 

@@ -8,17 +8,17 @@ import (
 	"github.com/SomeHowMicroservice/shm-be/gateway/common"
 	chatpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/chat"
 	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
-	customWs "github.com/SomeHowMicroservice/shm-be/gateway/websocket"
+	"github.com/SomeHowMicroservice/shm-be/gateway/socket"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
 type ChatHandler struct {
 	chatClient chatpb.ChatServiceClient
-	hub        *customWs.Hub
+	hub        *socket.Hub
 }
 
-func NewChatHandler(chatClient chatpb.ChatServiceClient, hub *customWs.Hub) *ChatHandler {
+func NewChatHandler(chatClient chatpb.ChatServiceClient, hub *socket.Hub) *ChatHandler {
 	return &ChatHandler{
 		chatClient,
 		hub,
@@ -64,7 +64,7 @@ func (h *ChatHandler) ServeWs(c *gin.Context) {
 		return
 	}
 
-	client := customWs.NewClient(h.hub, conn, c.Query("conversation_id"))
+	client := socket.NewClient(h.hub, conn, c.Query("conversation_id"))
 
 	h.hub.Register <- client
 

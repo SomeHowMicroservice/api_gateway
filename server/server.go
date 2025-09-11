@@ -4,12 +4,18 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
+	"time"
 
 	"github.com/SomeHowMicroservice/shm-be/gateway/common"
 	"github.com/SomeHowMicroservice/shm-be/gateway/config"
-	"github.com/SomeHowMicroservice/shm-be/gateway/container"
+	"github.com/SomeHowMicroservice/shm-be/gateway/event"
 	"github.com/SomeHowMicroservice/shm-be/gateway/initialization"
-	"github.com/SomeHowMicroservice/shm-be/gateway/websocket"
+	"github.com/SomeHowMicroservice/shm-be/gateway/mq"
+	"github.com/SomeHowMicroservice/shm-be/gateway/socket"
+	"github.com/ThreeDotsLabs/watermill"
+	"github.com/ThreeDotsLabs/watermill/message"
+	"github.com/ThreeDotsLabs/watermill/message/router/middleware"
 )
 
 var (
@@ -21,10 +27,14 @@ var (
 )
 
 type Server struct {
-	cfg          *config.AppConfig
-	clients      *initialization.GRPCClients
-	appContainer *container.Container
-	hub          *websocket.Hub
+	cfg        *config.AppConfig
+	httpServer *http.Server
+	clients    *initialization.GRPCClients
+	hub        *socket.Hub
+	sseManager *event.Manager
+	router     *message.Router
+	wmProduct  *initialization.WatermillSubscriber
+	wmPost     *initialization.WatermillSubscriber
 }
 
 func NewServer(cfg *config.AppConfig) (*Server, error) {
@@ -47,35 +57,101 @@ func NewServer(cfg *config.AppConfig) (*Server, error) {
 		return nil, fmt.Errorf("init clients thất bại: %w", err)
 	}
 
-	hub := websocket.NewHub()
+	hub := socket.NewHub()
 	go hub.Run()
 
-	appContainer := container.NewContainer(clients, cfg, hub)
+	sseManager := event.NewManager()
+	go sseManager.Run()
+
+	logger := watermill.NewStdLogger(false, false)
+	router, err := message.NewRouter(message.RouterConfig{}, logger)
+	if err != nil {
+		return nil, err
+	}
+
+	router.AddMiddleware(
+		middleware.CorrelationID,
+		middleware.Retry{
+			MaxRetries:      5,
+			InitialInterval: time.Microsecond,
+			Multiplier:      1.5,
+			MaxInterval:     5 * time.Microsecond,
+			Logger:          logger,
+		}.Middleware,
+		middleware.Recoverer,
+	)
+
+	wmProduct, err := initialization.InitWatermill(cfg, logger, common.ProductExchange)
+	if err != nil {
+		return nil, err
+	}
+
+	wmPost, err := initialization.InitWatermill(cfg, logger, common.PostExchange)
+	if err != nil {
+		return nil, err
+	}
+
+	mq.RegisterProductImageUploadedConsumer(router, wmProduct.Subscriber, sseManager)
+	mq.RegisterPostImageUploadedConsumer(router, wmPost.Subscriber, sseManager)
+
+	go func() {
+		if err := router.Run(context.Background()); err != nil {
+			log.Printf("Lỗi chạy message router: %v", err)
+		}
+	}()
+
+	httpServer, err := NewHttpServer(cfg, clients, hub, sseManager)
+	if err != nil {
+		return nil, err
+	}
 
 	return &Server{
-		cfg:          cfg,
-		clients:      clients,
-		appContainer: appContainer,
-		hub:          hub,
+		cfg,
+		httpServer,
+		clients,
+		hub,
+		sseManager,
+		router,
+		wmProduct,
+		wmPost,
 	}, nil
 }
 
 func (s *Server) Start() error {
-	return RunHTTPServer(s.cfg, s.clients, s.appContainer)
+	return s.httpServer.ListenAndServe()
 }
 
 func (s *Server) Shutdown(ctx context.Context) {
 	log.Println("Đang shutdown service...")
 
+	if s.router != nil {
+		s.router.Close()
+	}
+	if s.wmPost != nil {
+		s.wmPost.Close()
+	}
+	if s.wmProduct != nil {
+		s.wmProduct.Close()
+	}
 	if s.clients != nil {
 		s.clients.Close()
 	}
-
 	if s.hub != nil {
 		for _, clients := range s.hub.Conversations {
 			for client := range clients {
 				close(client.Send)
 			}
+		}
+	}
+	if s.sseManager != nil {
+		for _, user := range s.sseManager.Users {
+			close(user.Send)
+		}
+	}
+	if s.httpServer != nil {
+		if err := s.httpServer.Shutdown(ctx); err != nil {
+			log.Printf("Shutdown http server thất bại: %v", err)
+			return
 		}
 	}
 

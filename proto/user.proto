@@ -34,7 +34,7 @@ service UserService {
 
   rpc DeleteAddress(DeleteAddressRequest) returns (DeletedResponse);
 
-  rpc GetUsersById(GetManyRequest) returns (UsersPublicResponse);
+  rpc GetUsersPublicById(GetManyRequest) returns (UsersPublicResponse);
 }
 
 message GetByUserIdRequest {

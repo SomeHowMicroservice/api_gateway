@@ -2,19 +2,24 @@ package server
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/SomeHowMicroservice/shm-be/gateway/config"
 	"github.com/SomeHowMicroservice/shm-be/gateway/container"
+	"github.com/SomeHowMicroservice/shm-be/gateway/event"
 	"github.com/SomeHowMicroservice/shm-be/gateway/initialization"
 	"github.com/SomeHowMicroservice/shm-be/gateway/router"
+	"github.com/SomeHowMicroservice/shm-be/gateway/socket"
 	"github.com/gin-gonic/gin"
 )
 
-func RunHTTPServer(cfg *config.AppConfig, clients *initialization.GRPCClients, appContainer *container.Container) error {
+func NewHttpServer(cfg *config.AppConfig, clients *initialization.GRPCClients, hub *socket.Hub, manager *event.Manager) (*http.Server, error) {
+	appContainer := container.NewContainer(clients, cfg, hub, manager)
+
 	r := gin.Default()
 
 	if err := r.SetTrustedProxies([]string{"127.0.0.1"}); err != nil {
-		return fmt.Errorf("thiết lập Proxy thất bại: %w", err)
+		return nil, fmt.Errorf("thiết lập Proxy thất bại: %w", err)
 	}
 
 	config.CORSConfig(r)
@@ -27,5 +32,15 @@ func RunHTTPServer(cfg *config.AppConfig, clients *initialization.GRPCClients, a
 	router.ChatRouter(api, cfg, clients.UserClient, appContainer.Chat.Handler)
 
 	addr := fmt.Sprintf(":%d", cfg.App.HttpPort)
-	return r.Run(addr)
+
+	api.GET("/events", func(c *gin.Context) {
+		appContainer.SSEHandler.HandleSSE(c.Writer, c.Request)
+	})
+
+	httpServer := &http.Server{
+		Addr:    addr,
+		Handler: r,
+	}
+
+	return httpServer, nil
 }

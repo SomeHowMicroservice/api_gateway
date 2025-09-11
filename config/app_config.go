@@ -15,12 +15,19 @@ type AppConfig struct {
 	} `mapstructure:"jwt"`
 
 	Services struct {
-		AuthPort int `mapstructure:"auth_port"`
-		UserPort int `mapstructure:"user_port"`
+		AuthPort    int `mapstructure:"auth_port"`
+		UserPort    int `mapstructure:"user_port"`
 		ProductPort int `mapstructure:"product_port"`
-		PostPort int `mapstructure:"post_port"`
-		ChatPort int `mapstructure:"chat_port"`
+		PostPort    int `mapstructure:"post_port"`
+		ChatPort    int `mapstructure:"chat_port"`
 	} `mapstructure:"services"`
+
+	MessageQueue struct {
+		RHost     string `mapstructure:"rb_host"`
+		RUser     string `mapstructure:"rb_user"`
+		RPassword string `mapstructure:"rb_password"`
+		RVhost    string `mapstructure:"rb_vhost"`
+	} `mapstructure:"message_queue"`
 }
 
 func LoadConfig() (*AppConfig, error) {

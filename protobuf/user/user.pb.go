@@ -1623,7 +1623,7 @@ const file_proto_user_proto_rawDesc = "" +
 	"\x11CreateUserRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x03 \x01(\tR\bpassword2\x88\t\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword2\x8e\t\n" +
 	"\vUserService\x12H\n" +
 	"\x10CheckEmailExists\x12\x1d.user.CheckEmailExistsRequest\x1a\x15.user.CheckedResponse\x12N\n" +
 	"\x13CheckUsernameExists\x12 .user.CheckUsernameExistsRequest\x1a\x15.user.CheckedResponse\x12B\n" +
@@ -1640,8 +1640,8 @@ const file_proto_user_proto_rawDesc = "" +
 	"\x14GetAddressesByUserId\x12\x18.user.GetByUserIdRequest\x1a\x17.user.AddressesResponse\x12B\n" +
 	"\rCreateAddress\x12\x1a.user.CreateAddressRequest\x1a\x15.user.AddressResponse\x12B\n" +
 	"\rUpdateAddress\x12\x1a.user.UpdateAddressRequest\x1a\x15.user.AddressResponse\x12B\n" +
-	"\rDeleteAddress\x12\x1a.user.DeleteAddressRequest\x1a\x15.user.DeletedResponse\x12?\n" +
-	"\fGetUsersById\x12\x14.user.GetManyRequest\x1a\x19.user.UsersPublicResponseB\x03Z\x01.b\x06proto3"
+	"\rDeleteAddress\x12\x1a.user.DeleteAddressRequest\x1a\x15.user.DeletedResponse\x12E\n" +
+	"\x12GetUsersPublicById\x12\x14.user.GetManyRequest\x1a\x19.user.UsersPublicResponseB\x03Z\x01.b\x06proto3"
 
 var (
 	file_proto_user_proto_rawDescOnce sync.Once
@@ -1702,7 +1702,7 @@ var file_proto_user_proto_depIdxs = []int32{
 	8,  // 16: user.UserService.CreateAddress:input_type -> user.CreateAddressRequest
 	9,  // 17: user.UserService.UpdateAddress:input_type -> user.UpdateAddressRequest
 	5,  // 18: user.UserService.DeleteAddress:input_type -> user.DeleteAddressRequest
-	3,  // 19: user.UserService.GetUsersById:input_type -> user.GetManyRequest
+	3,  // 19: user.UserService.GetUsersPublicById:input_type -> user.GetManyRequest
 	18, // 20: user.UserService.CheckEmailExists:output_type -> user.CheckedResponse
 	18, // 21: user.UserService.CheckUsernameExists:output_type -> user.CheckedResponse
 	21, // 22: user.UserService.GetUserPublicById:output_type -> user.UserPublicResponse
@@ -1718,7 +1718,7 @@ var file_proto_user_proto_depIdxs = []int32{
 	7,  // 32: user.UserService.CreateAddress:output_type -> user.AddressResponse
 	7,  // 33: user.UserService.UpdateAddress:output_type -> user.AddressResponse
 	4,  // 34: user.UserService.DeleteAddress:output_type -> user.DeletedResponse
-	1,  // 35: user.UserService.GetUsersById:output_type -> user.UsersPublicResponse
+	1,  // 35: user.UserService.GetUsersPublicById:output_type -> user.UsersPublicResponse
 	20, // [20:36] is the sub-list for method output_type
 	4,  // [4:20] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name

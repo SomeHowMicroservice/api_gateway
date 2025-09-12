@@ -49,6 +49,12 @@ service PostService{
   rpc GetDeletedPosts(GetAllPostsAdminRequest) returns (PostsAdminResponse);
 
   rpc GetDeletedPostById(GetOneRequest) returns (PostAdminDetailsResponse);
+
+  rpc GetPostContentById(GetOneRequest) returns (PostContentResponse);
+}
+
+message PostContentResponse {
+  string content = 1;
 }
 
 message UpdatePostRequest {

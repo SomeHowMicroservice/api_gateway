@@ -45,7 +45,7 @@ func ProductRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb
 	{
 		admin.POST("/categories", productHandler.CreateCategory)
 		admin.GET("/categories", productHandler.GetAllCategoriesAdmin)
-		admin.GET("/categories/:id", productHandler.CategoryAdminDetails)
+		admin.GET("/categories/:id", productHandler.GetCategoryByID)
 		admin.PUT("/categories/:id", productHandler.UpdateCategory)
 		admin.DELETE("/categories/permanent", productHandler.PermanentlyDeleteCategories)
 		admin.DELETE("/categories/:id/permanent", productHandler.PermanentlyDeleteCategory)
@@ -91,5 +91,6 @@ func ProductRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb
 		admin.DELETE("/tags/:id", productHandler.DeleteTag)
 		admin.DELETE("/tags/permanent", productHandler.PermanentlyDeleteTags)
 		admin.DELETE("/tags/:id/permanent", productHandler.PermanentlyDeleteTag)
+		admin.GET("/images", productHandler.GetImagesByProductID)
 	}
 }

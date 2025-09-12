@@ -344,6 +344,22 @@ func (h *PostHandler) GetPostByID(c *gin.Context) {
 	})
 }
 
+func (h *PostHandler) GetPostContentByID(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
+	defer cancel()
+
+	postId := c.Param("id")
+
+	res, err := h.postClient.GetPostContentById(ctx, &postpb.GetOneRequest{
+		Id: postId,
+	})
+	if common.HandleGrpcError(c, err) {
+		return
+	}
+
+	common.JSON(c, http.StatusOK, "Lấy nội dung bài viết thành công", res)
+}
+
 func (h *PostHandler) UpdatePost(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
 	defer cancel()

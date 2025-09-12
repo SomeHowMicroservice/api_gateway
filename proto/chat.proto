@@ -14,7 +14,7 @@ message CreateMessageRequest {
   string sender_id = 2;
   string sender_role = 3;
   optional string content = 4;
-  optional string base64_data = 5;
+  optional string file_data = 5;
 }
 
 message CreateConversationRequest {
@@ -25,17 +25,12 @@ message GetByUserIdRequest {
   string user_id = 1;
 }
 
-message SimpleImageResponse {
-  string id = 1;
-  string url = 2;
-}
-
 message MessageResponse {
   string id = 1;
   string sender_id = 2;
   string sender_role = 3;
   optional string content = 4;
-  optional SimpleImageResponse image = 5;
+  optional string image_url = 5;
   optional bool is_read = 6;
   optional string read_at = 7;
   string created_at = 8;

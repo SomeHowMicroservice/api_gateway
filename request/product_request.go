@@ -120,3 +120,7 @@ type ProductPaginationQuery struct {
 	Search     string `form:"search" json:"search"`
 	CategoryID string `form:"category_id" json:"category_id" binding:"omitempty,uuid4"`
 }
+
+type GetImageByProductIDQuery struct {
+	ProductID string `form:"product_id" binding:"required,uuid4"`
+}

@@ -17,10 +17,6 @@ const (
 	maxMessageSize = 512
 )
 
-var (
-	newline = []byte{'\n'}
-)
-
 type Client struct {
 	Hub    *Hub
 	Conn   *websocket.Conn
@@ -59,13 +55,11 @@ func (c *Client) ReadPump() {
 			break
 		}
 		
-		// Tạo Message với ConversationID
 		message := &Message{
 			ConversationID: c.ConversationID,
 			Content:        messageBytes,
 		}
-		
-		// Gửi message đến Hub để broadcast
+
 		c.Hub.Broadcast <- message
 	}
 }
@@ -82,7 +76,6 @@ func (c *Client) WritePump() {
 		case message, ok := <-c.Send:
 			c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
-				// Hub đã đóng channel.
 				c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
@@ -93,10 +86,9 @@ func (c *Client) WritePump() {
 			}
 			w.Write(message)
 
-			// Thêm các tin nhắn đang chờ trong queue vào tin nhắn hiện tại.
 			n := len(c.Send)
 			for i := 0; i < n; i++ {
-				w.Write(newline)
+				w.Write([]byte{'\n'})
 				w.Write(<-c.Send)
 			}
 

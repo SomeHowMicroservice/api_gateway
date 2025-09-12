@@ -828,7 +828,7 @@ func (h *ProductHandler) GetCategoriesNoProduct(c *gin.Context) {
 	common.JSON(c, http.StatusOK, "Lấy danh sách danh mục sản phẩm thành công", res)
 }
 
-func (h *ProductHandler) CategoryAdminDetails(c *gin.Context) {
+func (h *ProductHandler) GetCategoryByID(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
@@ -1003,6 +1003,27 @@ func (h *ProductHandler) GetProductByID(c *gin.Context) {
 	common.JSON(c, http.StatusOK, "Lấy chi tiết sản phẩm thành công", gin.H{
 		"product": res,
 	})
+}
+
+func (h *ProductHandler) GetImagesByProductID(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+	defer cancel()
+
+	var query request.GetImageByProductIDQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
+		message := common.HandleValidationError(err)
+		common.JSON(c, http.StatusBadRequest, message, nil)
+		return
+	}
+
+	res, err := h.productClient.GetImagesByProductId(ctx, &productpb.GetByProductId{
+		ProductId: query.ProductID,
+	})
+	if common.HandleGrpcError(c, err) {
+		return
+	}
+
+	common.JSON(c, http.StatusOK, "Lấy các ảnh sản phẩm thành công", res)
 }
 
 func (h *ProductHandler) GetAllProductsAdmin(c *gin.Context) {

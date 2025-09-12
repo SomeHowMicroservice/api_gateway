@@ -42,6 +42,7 @@ const (
 	PostService_PermanentlyDeletePosts_FullMethodName  = "/post.PostService/PermanentlyDeletePosts"
 	PostService_GetDeletedPosts_FullMethodName         = "/post.PostService/GetDeletedPosts"
 	PostService_GetDeletedPostById_FullMethodName      = "/post.PostService/GetDeletedPostById"
+	PostService_GetPostContentById_FullMethodName      = "/post.PostService/GetPostContentById"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -71,6 +72,7 @@ type PostServiceClient interface {
 	PermanentlyDeletePosts(ctx context.Context, in *PermanentlyDeleteManyRequest, opts ...grpc.CallOption) (*DeletedResponse, error)
 	GetDeletedPosts(ctx context.Context, in *GetAllPostsAdminRequest, opts ...grpc.CallOption) (*PostsAdminResponse, error)
 	GetDeletedPostById(ctx context.Context, in *GetOneRequest, opts ...grpc.CallOption) (*PostAdminDetailsResponse, error)
+	GetPostContentById(ctx context.Context, in *GetOneRequest, opts ...grpc.CallOption) (*PostContentResponse, error)
 }
 
 type postServiceClient struct {
@@ -311,6 +313,16 @@ func (c *postServiceClient) GetDeletedPostById(ctx context.Context, in *GetOneRe
 	return out, nil
 }
 
+func (c *postServiceClient) GetPostContentById(ctx context.Context, in *GetOneRequest, opts ...grpc.CallOption) (*PostContentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PostContentResponse)
+	err := c.cc.Invoke(ctx, PostService_GetPostContentById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostServiceServer is the server API for PostService service.
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility.
@@ -338,6 +350,7 @@ type PostServiceServer interface {
 	PermanentlyDeletePosts(context.Context, *PermanentlyDeleteManyRequest) (*DeletedResponse, error)
 	GetDeletedPosts(context.Context, *GetAllPostsAdminRequest) (*PostsAdminResponse, error)
 	GetDeletedPostById(context.Context, *GetOneRequest) (*PostAdminDetailsResponse, error)
+	GetPostContentById(context.Context, *GetOneRequest) (*PostContentResponse, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -416,6 +429,9 @@ func (UnimplementedPostServiceServer) GetDeletedPosts(context.Context, *GetAllPo
 }
 func (UnimplementedPostServiceServer) GetDeletedPostById(context.Context, *GetOneRequest) (*PostAdminDetailsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDeletedPostById not implemented")
+}
+func (UnimplementedPostServiceServer) GetPostContentById(context.Context, *GetOneRequest) (*PostContentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPostContentById not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 func (UnimplementedPostServiceServer) testEmbeddedByValue()                     {}
@@ -852,6 +868,24 @@ func _PostService_GetDeletedPostById_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_GetPostContentById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).GetPostContentById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_GetPostContentById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).GetPostContentById(ctx, req.(*GetOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -950,6 +984,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDeletedPostById",
 			Handler:    _PostService_GetDeletedPostById_Handler,
+		},
+		{
+			MethodName: "GetPostContentById",
+			Handler:    _PostService_GetPostContentById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

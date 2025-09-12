@@ -35,6 +35,7 @@ func PostRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.Us
 		admin.GET("/posts/deleted", postHandler.GetDeletedPosts)
 		admin.GET("/posts/:id", postHandler.GetPostByID)
 		admin.GET("/posts/:id/deleted", postHandler.GetDeletedPostByID)
+		admin.GET("/posts/:id/content", postHandler.GetPostContentByID)
 		admin.PATCH("/posts/:id", postHandler.UpdatePost)
 		admin.DELETE("/posts/:id", postHandler.DeletePost)
 		admin.DELETE("/posts", postHandler.DeletePosts)

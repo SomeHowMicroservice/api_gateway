@@ -14,7 +14,7 @@ message CreateMessageRequest {
   string sender_id = 2;
   string sender_role = 3;
   optional string content = 4;
-  optional string file_data = 5;
+  optional bytes file_data = 5;
 }
 
 message CreateConversationRequest {

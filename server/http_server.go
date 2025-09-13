@@ -30,12 +30,10 @@ func NewHttpServer(cfg *config.AppConfig, clients *initialization.GRPCClients, h
 	router.ProductRouter(api, cfg, clients.UserClient, appContainer.Product.Handler)
 	router.PostRouter(api, cfg, clients.UserClient, appContainer.Post.Handler)
 	router.ChatRouter(api, cfg, clients.UserClient, appContainer.Chat.Handler)
+	router.SSERouter(api, appContainer.SSEHandler)
+	router.WSRouter(api, cfg, clients.UserClient, appContainer.WSHandler)
 
 	addr := fmt.Sprintf(":%d", cfg.App.HttpPort)
-
-	api.GET("/events", func(c *gin.Context) {
-		appContainer.SSEHandler.HandleSSE(c.Writer, c.Request)
-	})
 
 	httpServer := &http.Server{
 		Addr:    addr,

@@ -9,18 +9,18 @@ import (
 )
 
 type Manager struct {
-	Users      map[string]*User
-	Register   chan *User
-	Unregister chan *User
+	Clients      map[string]*Client
+	Register   chan *Client
+	Unregister chan *Client
 	Broadcast  chan []byte
 	Mutex      sync.RWMutex
 }
 
 func NewManager() *Manager {
 	return &Manager{
-		Users:      make(map[string]*User),
-		Register:   make(chan *User),
-		Unregister: make(chan *User),
+		Clients:      make(map[string]*Client),
+		Register:   make(chan *Client),
+		Unregister: make(chan *Client),
 		Broadcast:  make(chan []byte),
 	}
 }
@@ -28,31 +28,31 @@ func NewManager() *Manager {
 func (m *Manager) Run() {
 	for {
 		select {
-		case user := <-m.Register:
+		case client := <-m.Register:
 			m.Mutex.Lock()
-			m.Users[user.ID] = user
+			m.Clients[client.ID] = client
 			m.Mutex.Unlock()
-			log.Printf("Người dùng %s đã kết nối", user.ID)
+			log.Printf("Người dùng %s đã kết nối", client.ID)
 
-		case user := <-m.Unregister:
+		case client := <-m.Unregister:
 			m.Mutex.Lock()
-			if _, ok := m.Users[user.ID]; ok {
-				delete(m.Users, user.ID)
-				close(user.Send)
-				close(user.Done)
+			if _, ok := m.Clients[client.ID]; ok {
+				delete(m.Clients, client.ID)
+				close(client.Send)
+				close(client.Done)
 			}
 			m.Mutex.Unlock()
-			log.Printf("Người dùng %s đã ngắt kết nối", user.ID)
+			log.Printf("Người dùng %s đã ngắt kết nối", client.ID)
 
 		case message := <-m.Broadcast:
 			m.Mutex.RLock()
-			for _, user := range m.Users {
+			for _, client := range m.Clients {
 				select {
-				case user.Send <- message:
+				case client.Send <- message:
 				default:
-					delete(m.Users, user.ID)
-					close(user.Send)
-					close(user.Done)
+					delete(m.Clients, client.ID)
+					close(client.Send)
+					close(client.Done)
 				}
 			}
 			m.Mutex.RUnlock()
@@ -64,17 +64,17 @@ func (m *Manager) SendToUser(userID string, event *common.SSEEvent) {
 	data, _ := json.Marshal(event)
 
 	m.Mutex.RLock()
-	for _, user := range m.Users {
-		if user.UserID == userID {
+	for _, client := range m.Clients {
+		if client.UserID == userID {
 			select {
-			case user.Send <- data:
+			case client.Send <- data:
 			default:
 				m.Mutex.RUnlock()
 				m.Mutex.Lock()
-				if _, ok := m.Users[user.ID]; ok {
-					delete(m.Users, user.ID)
-					close(user.Send)
-					close(user.Done)
+				if _, ok := m.Clients[client.ID]; ok {
+					delete(m.Clients, client.ID)
+					close(client.Send)
+					close(client.Done)
 				}
 				m.Mutex.Unlock()
 				m.Mutex.RLock()

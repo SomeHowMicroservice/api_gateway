@@ -9,12 +9,13 @@ import (
 )
 
 type Container struct {
-	Auth    *AuthContainer
-	User    *UserContainer
-	Product *ProductContainer
-	Post    *PostContainer
-	Chat    *ChatContainer
+	Auth       *AuthContainer
+	User       *UserContainer
+	Product    *ProductContainer
+	Post       *PostContainer
+	Chat       *ChatContainer
 	SSEHandler *handler.SSEHandler
+	WSHandler  *handler.WSHandler
 }
 
 func NewContainer(cs *initialization.GRPCClients, cfg *config.AppConfig, hub *socket.Hub, manager *event.Manager) *Container {
@@ -22,8 +23,9 @@ func NewContainer(cs *initialization.GRPCClients, cfg *config.AppConfig, hub *so
 	user := NewUserContainer(cs.UserClient)
 	product := NewProductHandler(cs.ProductClient)
 	post := NewPostContainer(cs.PostClient)
-	chat := NewChatContainer(cs.ChatClient, hub)
+	chat := NewChatContainer(cs.ChatClient)
 	sseHandler := handler.NewSSEHandler(manager, cs.UserClient)
+	wsHandler := handler.NewWSHandler(hub)
 	return &Container{
 		auth,
 		user,
@@ -31,5 +33,6 @@ func NewContainer(cs *initialization.GRPCClients, cfg *config.AppConfig, hub *so
 		post,
 		chat,
 		sseHandler,
+		wsHandler,
 	}
 }

@@ -27,7 +27,7 @@ type CreateMessageRequest struct {
 	SenderId       string                 `protobuf:"bytes,2,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
 	SenderRole     string                 `protobuf:"bytes,3,opt,name=sender_role,json=senderRole,proto3" json:"sender_role,omitempty"`
 	Content        *string                `protobuf:"bytes,4,opt,name=content,proto3,oneof" json:"content,omitempty"`
-	FileData       *string                `protobuf:"bytes,5,opt,name=file_data,json=fileData,proto3,oneof" json:"file_data,omitempty"`
+	FileData       []byte                 `protobuf:"bytes,5,opt,name=file_data,json=fileData,proto3,oneof" json:"file_data,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -90,11 +90,11 @@ func (x *CreateMessageRequest) GetContent() string {
 	return ""
 }
 
-func (x *CreateMessageRequest) GetFileData() string {
-	if x != nil && x.FileData != nil {
-		return *x.FileData
+func (x *CreateMessageRequest) GetFileData() []byte {
+	if x != nil {
+		return x.FileData
 	}
-	return ""
+	return nil
 }
 
 type CreateConversationRequest struct {
@@ -364,7 +364,7 @@ const file_proto_chat_proto_rawDesc = "" +
 	"\vsender_role\x18\x03 \x01(\tR\n" +
 	"senderRole\x12\x1d\n" +
 	"\acontent\x18\x04 \x01(\tH\x00R\acontent\x88\x01\x01\x12 \n" +
-	"\tfile_data\x18\x05 \x01(\tH\x01R\bfileData\x88\x01\x01B\n" +
+	"\tfile_data\x18\x05 \x01(\fH\x01R\bfileData\x88\x01\x01B\n" +
 	"\n" +
 	"\b_contentB\f\n" +
 	"\n" +

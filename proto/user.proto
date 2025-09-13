@@ -4,21 +4,9 @@ package user;
 option go_package = ".";
 
 service UserService {
-  rpc CheckEmailExists(CheckEmailExistsRequest) returns (CheckedResponse);
-
-  rpc CheckUsernameExists(CheckUsernameExistsRequest) returns (CheckedResponse);
+  rpc CheckUserExistsById(CheckUserExistsByIdRequest) returns (CheckedResponse); 
 
   rpc GetUserPublicById(GetOneRequest) returns (UserPublicResponse);
-
-  rpc GetUserById(GetOneRequest) returns (UserResponse);
-
-  rpc GetUserPublicByEmail(GetUserByEmailRequest) returns (UserPublicResponse);
-
-  rpc GetUserByUsername(GetUserByUsernameRequest) returns (UserResponse);
-
-  rpc CreateUser(CreateUserRequest) returns (UserPublicResponse);
-
-  rpc UpdateUserPassword(UpdateUserPasswordRequest) returns (UpdatedResponse);
 
   rpc UpdateProfile(UpdateProfileRequest) returns (UserPublicResponse);
 
@@ -33,8 +21,14 @@ service UserService {
   rpc UpdateAddress(UpdateAddressRequest) returns (AddressResponse);
 
   rpc DeleteAddress(DeleteAddressRequest) returns (DeletedResponse);
+}
 
-  rpc GetUsersPublicById(GetManyRequest) returns (UsersPublicResponse);
+message CheckedResponse {
+  bool exists = 1;
+}
+
+message CheckUserExistsByIdRequest {
+  string id = 1;
 }
 
 message GetByUserIdRequest {
@@ -47,10 +41,6 @@ message UsersPublicResponse {
 
 message GetOneRequest {
   string id = 1;
-}
-
-message GetManyRequest {
-  repeated string ids = 1;
 }
 
 message DeletedResponse {
@@ -116,10 +106,6 @@ message UpdateMeasurementRequest {
   string user_id = 7;
 }
 
-message GetUserByEmailRequest {
-  string email = 1;
-}
-
 message UpdateProfileRequest {
   string id = 1;
   string first_name = 2;
@@ -131,33 +117,6 @@ message UpdateProfileRequest {
 
 message UpdatedResponse {
   bool success = 1;
-}
-
-message UpdateUserPasswordRequest {
-  string id = 1;
-  string new_password = 2;
-}
-
-message CheckEmailExistsRequest {
-  string email = 1;
-}
-
-message CheckUsernameExistsRequest {
-  string username = 1;
-}
-
-message CheckedResponse {
-  bool exists = 1;
-}
-
-message UserResponse {
-  string id = 1;
-  string username = 2;
-  string email = 3;
-  repeated string roles = 4;
-  string password = 5;
-  string created_at = 6;
-  ProfileResponse profile = 7;
 }
 
 message ProfileResponse {
@@ -175,14 +134,4 @@ message UserPublicResponse {
   repeated string roles = 4;
   string created_at = 5;
   ProfileResponse profile = 6;
-}
-
-message GetUserByUsernameRequest {
-  string username = 1;
-}
-
-message CreateUserRequest {
-  string username = 1;
-  string email = 2;
-  string password = 3;
 }

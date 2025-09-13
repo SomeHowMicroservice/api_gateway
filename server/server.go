@@ -57,7 +57,7 @@ func NewServer(cfg *config.AppConfig) (*Server, error) {
 		return nil, fmt.Errorf("init clients thất bại: %w", err)
 	}
 
-	hub := socket.NewHub()
+	hub := socket.NewHub(clients.ChatClient)
 	go hub.Run()
 
 	sseManager := event.NewManager()
@@ -144,8 +144,8 @@ func (s *Server) Shutdown(ctx context.Context) {
 		}
 	}
 	if s.sseManager != nil {
-		for _, user := range s.sseManager.Users {
-			close(user.Send)
+		for _, client := range s.sseManager.Clients {
+			close(client.Send)
 		}
 	}
 	if s.httpServer != nil {

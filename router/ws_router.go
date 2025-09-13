@@ -8,12 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ChatRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.UserServiceClient, chatHandler *handler.ChatHandler) {
+func WSRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.UserServiceClient, wsHandler *handler.WSHandler) {
 	accessName := cfg.Jwt.AccessName
 	secretKey := cfg.Jwt.SecretKey
 
-	chat := rg.Group("", middleware.RequireAuth(accessName, secretKey, userClient))
-	{
-		chat.GET("/me/conversations", middleware.RequireSingleRole(), chatHandler.MyConversation)
-	}
+	rg.GET("/ws", middleware.RequireAuth(accessName, secretKey, userClient), wsHandler.HandleWS)
 }

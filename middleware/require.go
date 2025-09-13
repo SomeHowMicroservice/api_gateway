@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"slices"
+	"time"
 
 	"github.com/SomeHowMicroservice/shm-be/gateway/common"
 	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
@@ -39,7 +40,9 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 			return
 		}
 
-		ctx := c.Request.Context()
+		ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+		defer cancel()
+		
 		userRes, err := fetchUserFromUserService(ctx, userID, userClient)
 		if err != nil {
 			switch err {
@@ -95,7 +98,8 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 			return
 		}
 
-		ctx := c.Request.Context()
+		ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+		defer cancel()
 		userRes, err := fetchUserFromUserService(ctx, userID, userClient)
 		if err != nil {
 			switch err {

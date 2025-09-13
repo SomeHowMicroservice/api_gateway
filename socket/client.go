@@ -1,10 +1,14 @@
 package socket
 
 import (
+	"context"
+	"encoding/json"
 	"log"
 	"time"
 
+	chatpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/chat"
 	"github.com/gorilla/websocket"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -18,18 +22,22 @@ const (
 )
 
 type Client struct {
-	Hub    *Hub
-	Conn   *websocket.Conn
-	Send   chan []byte
+	Hub            *Hub
+	Conn           *websocket.Conn
+	Send           chan []byte
+	UserID         string
+	UserRole       string
 	ConversationID string
 }
 
-func NewClient(hub *Hub, conn *websocket.Conn, conversationID string) *Client {
+func NewClient(hub *Hub, conn *websocket.Conn, userID, userRole, conversationID string) *Client {
 	return &Client{
-		Hub:            hub,
-		Conn:           conn,
-		Send:           make(chan []byte, 256),
-		ConversationID: conversationID,
+		hub,
+		conn,
+		make(chan []byte, 256),
+		userID,
+		userRole,
+		conversationID,
 	}
 }
 
@@ -38,7 +46,7 @@ func (c *Client) ReadPump() {
 		c.Hub.Unregister <- c
 		c.Conn.Close()
 	}()
-	
+
 	c.Conn.SetReadLimit(maxMessageSize)
 	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.Conn.SetPongHandler(func(string) error {
@@ -47,14 +55,44 @@ func (c *Client) ReadPump() {
 	})
 
 	for {
-		_, messageBytes, err := c.Conn.ReadMessage()
+		messageType, data, err := c.Conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
 			break
 		}
-		
+
+		var file []byte
+		var content string
+		switch messageType {
+		case websocket.BinaryMessage:
+			file = data
+		case websocket.TextMessage:
+			content = string(data)
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		res, err := c.Hub.ChatClient.CreateMessage(ctx, &chatpb.CreateMessageRequest{
+			ConversationId: c.ConversationID,
+			SenderId:       c.UserID,
+			SenderRole:     c.UserRole,
+			Content:        &content,
+			FileData:       file,
+		})
+		if err != nil {
+			if st, ok := status.FromError(err); ok {
+				log.Println("gRPC error ", st.Message())
+				break
+			}
+			log.Println("Chat service err ", err)
+			break
+		}
+
+		messageBytes, _ := json.Marshal(res)
+
 		message := &Message{
 			ConversationID: c.ConversationID,
 			Content:        messageBytes,

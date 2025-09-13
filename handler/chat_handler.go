@@ -8,21 +8,16 @@ import (
 	"github.com/SomeHowMicroservice/shm-be/gateway/common"
 	chatpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/chat"
 	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
-	"github.com/SomeHowMicroservice/shm-be/gateway/socket"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
 type ChatHandler struct {
 	chatClient chatpb.ChatServiceClient
-	hub        *socket.Hub
 }
 
-func NewChatHandler(chatClient chatpb.ChatServiceClient, hub *socket.Hub) *ChatHandler {
-	return &ChatHandler{
-		chatClient,
-		hub,
-	}
+func NewChatHandler(chatClient chatpb.ChatServiceClient) *ChatHandler {
+	return &ChatHandler{chatClient}
 }
 
 var upgrader = websocket.Upgrader{
@@ -55,19 +50,4 @@ func (h *ChatHandler) MyConversation(c *gin.Context) {
 	common.JSON(c, http.StatusOK, "Lấy thông tin cuộc trò chuyện thành công", gin.H{
 		"conversation": res,
 	})
-}
-
-func (h *ChatHandler) ServeWs(c *gin.Context) {
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		common.JSON(c, http.StatusInternalServerError, "Cập nhật kết nối từ HTTP -> WebSocket thất bại: "+err.Error(), nil)
-		return
-	}
-
-	client := socket.NewClient(h.hub, conn, c.Query("conversation_id"))
-
-	h.hub.Register <- client
-
-	go client.WritePump()
-	go client.ReadPump()
 }

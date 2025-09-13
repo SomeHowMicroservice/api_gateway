@@ -2,15 +2,15 @@ package event
 
 import "github.com/google/uuid"
 
-type User struct {
+type Client struct {
 	ID     string
 	UserID string
 	Send   chan []byte
 	Done   chan bool
 }
 
-func NewUserReceiverEvent(userID string) *User {
-	return &User{
+func NewClient(userID string) *Client {
+	return &Client{
 		ID: uuid.NewString(),
 		UserID: userID,
 		Send: make(chan []byte, 256),

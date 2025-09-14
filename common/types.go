@@ -13,12 +13,19 @@ type ClientAddresses struct {
 	ChatAddr    string
 }
 
-type ImageUploadedEvent struct {
+type ProductImageUploadedEvent struct {
+	Service   string `json:"service"`
+	UserID    string `json:"user_id"`
+	ProductID string `json:"product_id"`
+}
+
+type PostImageUploadedEvent struct {
 	Service string `json:"service"`
 	UserID  string `json:"user_id"`
+	PostID  string `json:"post_id"`
 }
 
 type SSEEvent struct {
 	Event string `json:"event"`
-	Data  any    `json:"data"`
+	Data  any    `json:"data,omitempty"`
 }

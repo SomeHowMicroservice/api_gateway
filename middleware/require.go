@@ -26,7 +26,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 
 		claims, err := ParseToken(tokenStr, secretKey)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
 				Message: err.Error(),
 			})
 			return
@@ -34,7 +34,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 
 		userID, userRoles, err := ExtractToken(claims)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
 				Message: err.Error(),
 			})
 			return
@@ -60,7 +60,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 		}
 
 		if !slices.Equal(userRes.Roles, userRoles) {
-			c.AbortWithStatusJSON(http.StatusConflict, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
 				Message: common.ErrInvalidUser.Error(),
 			})
 			return
@@ -84,7 +84,7 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 
 		claims, err := ParseToken(tokenStr, secretKey)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
 				Message: err.Error(),
 			})
 			return
@@ -92,7 +92,7 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 
 		userID, userRoles, err := ExtractToken(claims)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
 				Message: err.Error(),
 			})
 			return
@@ -117,7 +117,7 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 		}
 
 		if !slices.Equal(userRes.Roles, userRoles) {
-			c.AbortWithStatusJSON(http.StatusConflict, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
 				Message: common.ErrInvalidUser.Error(),
 			})
 			return
@@ -146,7 +146,7 @@ func OptionalAuth(accessName string, secretKey string, userClient userpb.UserSer
 
 		claims, err := ParseToken(tokenStr, secretKey)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
 				Message: err.Error(),
 			})
 			return
@@ -154,7 +154,7 @@ func OptionalAuth(accessName string, secretKey string, userClient userpb.UserSer
 
 		userID, _, err := ExtractToken(claims)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
 				Message: err.Error(),
 			})
 			return

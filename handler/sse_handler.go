@@ -25,9 +25,15 @@ func (h *SSEHandler) HandleSSE(c *gin.Context) {
 	c.Header("Content-Type", "text/event-stream")
 	c.Header("Cache-Control", "no-cache")
 	c.Header("Connection", "keep-alive")
-	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Credentials", "true")
+	origin := c.GetHeader("Origin")
+	if origin != "" {
+		c.Header("Access-Control-Allow-Origin", origin)
+	}
 
 	userID := c.GetString("user_id")
+
+	fmt.Println(userID)
 
 	client := event.NewClient(userID)
 

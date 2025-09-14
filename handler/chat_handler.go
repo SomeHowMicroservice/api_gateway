@@ -9,7 +9,6 @@ import (
 	chatpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/chat"
 	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 )
 
 type ChatHandler struct {
@@ -18,14 +17,6 @@ type ChatHandler struct {
 
 func NewChatHandler(chatClient chatpb.ChatServiceClient) *ChatHandler {
 	return &ChatHandler{chatClient}
-}
-
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
 }
 
 func (h *ChatHandler) MyConversation(c *gin.Context) {

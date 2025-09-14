@@ -64,7 +64,7 @@ func (h *SSEHandler) HandleSSE(c *gin.Context) {
 
 	clientGone := c.Request.Context().Done()
 
-	ticker := time.NewTicker(30 * time.Second)
+	ticker := time.NewTicker(54 * time.Second)
 	defer ticker.Stop()
 
 	for {

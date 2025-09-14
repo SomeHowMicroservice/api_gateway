@@ -21,6 +21,11 @@ const (
 	maxMessageSize = 512
 )
 
+var (
+	newline = []byte{'\n'}
+	space   = []byte{' '}
+)
+
 type Client struct {
 	Hub            *Hub
 	Conn           *websocket.Conn
@@ -126,7 +131,7 @@ func (c *Client) WritePump() {
 
 			n := len(c.Send)
 			for i := 0; i < n; i++ {
-				w.Write([]byte{'\n'})
+				w.Write(newline)
 				w.Write(<-c.Send)
 			}
 

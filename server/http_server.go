@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/SomeHowMicroservice/shm-be/gateway/config"
 	"github.com/SomeHowMicroservice/shm-be/gateway/container"
@@ -36,8 +37,12 @@ func NewHttpServer(cfg *config.AppConfig, clients *initialization.GRPCClients, h
 	addr := fmt.Sprintf(":%d", cfg.App.HttpPort)
 
 	httpServer := &http.Server{
-		Addr:    addr,
-		Handler: r,
+		Addr:           addr,
+		Handler:        r,
+		IdleTimeout:    time.Minute,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   0,
+		MaxHeaderBytes: 1 << 20,
 	}
 
 	return httpServer, nil

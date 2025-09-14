@@ -129,12 +129,11 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	userIDAny, exists := c.Get("user_id")
-	if !exists {
+	userID := c.GetString("user_id")
+	if userID == "" {
 		common.JSON(c, http.StatusUnauthorized, common.ErrUserIdNotFound.Error(), nil)
 		return
 	}
-	userID := userIDAny.(string)
 
 	userRolesAny, exists := c.Get("user_roles")
 	if !exists {

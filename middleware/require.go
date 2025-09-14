@@ -26,7 +26,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 
 		claims, err := ParseToken(tokenStr, secretKey)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
 				Message: err.Error(),
 			})
 			return
@@ -34,7 +34,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 
 		userID, userRoles, err := ExtractToken(claims)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
 				Message: err.Error(),
 			})
 			return
@@ -42,7 +42,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 
 		ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 		defer cancel()
-		
+
 		userRes, err := fetchUserFromUserService(ctx, userID, userClient)
 		if err != nil {
 			switch err {
@@ -52,7 +52,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 				})
 				return
 			default:
-				c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+				c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
 					Message: err.Error(),
 				})
 				return
@@ -60,7 +60,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 		}
 
 		if !slices.Equal(userRes.Roles, userRoles) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusConflict, common.ApiResponse{
 				Message: common.ErrInvalidUser.Error(),
 			})
 			return
@@ -84,7 +84,7 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 
 		claims, err := ParseToken(tokenStr, secretKey)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
 				Message: err.Error(),
 			})
 			return
@@ -92,7 +92,7 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 
 		userID, userRoles, err := ExtractToken(claims)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
 				Message: err.Error(),
 			})
 			return
@@ -109,7 +109,7 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 				})
 				return
 			default:
-				c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+				c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
 					Message: err.Error(),
 				})
 				return
@@ -117,7 +117,7 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 		}
 
 		if !slices.Equal(userRes.Roles, userRoles) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+			c.AbortWithStatusJSON(http.StatusConflict, common.ApiResponse{
 				Message: common.ErrInvalidUser.Error(),
 			})
 			return
@@ -131,6 +131,62 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 		}
 
 		c.Set("user", userRes)
+		c.Next()
+	}
+}
+
+func OptionalAuth(accessName string, secretKey string, userClient userpb.UserServiceClient) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenStr, err := c.Cookie(accessName)
+		if err != nil || tokenStr == "" {
+			c.Set("user_id", "")
+			c.Next()
+			return
+		}
+
+		claims, err := ParseToken(tokenStr, secretKey)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
+				Message: err.Error(),
+			})
+			return
+		}
+
+		userID, _, err := ExtractToken(claims)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
+				Message: err.Error(),
+			})
+			return
+		}
+
+		ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+		defer cancel()
+
+		res, err := userClient.CheckUserExistsById(ctx, &userpb.CheckUserExistsByIdRequest{
+			Id: userID,
+		})
+		if err != nil {
+			if st, ok := status.FromError(err); ok {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
+					Message: st.Message(),
+				})
+				return
+			}
+			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{
+				Message: err.Error(),
+			})
+			return
+		}
+
+		if !res.Exists {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{
+				Message: common.ErrUnAuth.Error(),
+			})
+			return
+		}
+
+		c.Set("user_id", userID)
 		c.Next()
 	}
 }
@@ -199,10 +255,10 @@ func fetchUserFromUserService(ctx context.Context, userID string, userClient use
 			case codes.NotFound:
 				return nil, common.ErrUserNotFound
 			default:
-				return nil, fmt.Errorf("lỗi user service: %s", st.Message())
+				return nil, fmt.Errorf("%s", st.Message())
 			}
 		}
-		return nil, fmt.Errorf("lỗi hệ thống: %w", err)
+		return nil, err
 	}
 
 	return userRes, nil

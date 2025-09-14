@@ -31,7 +31,7 @@ func NewHttpServer(cfg *config.AppConfig, clients *initialization.GRPCClients, h
 	router.ProductRouter(api, cfg, clients.UserClient, appContainer.Product.Handler)
 	router.PostRouter(api, cfg, clients.UserClient, appContainer.Post.Handler)
 	router.ChatRouter(api, cfg, clients.UserClient, appContainer.Chat.Handler)
-	router.SSERouter(api, appContainer.SSEHandler)
+	router.SSERouter(api, cfg, clients.UserClient, appContainer.SSEHandler)
 	router.WSRouter(api, cfg, clients.UserClient, appContainer.WSHandler)
 
 	addr := fmt.Sprintf(":%d", cfg.App.HttpPort)

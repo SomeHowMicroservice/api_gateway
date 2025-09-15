@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SSERouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.UserServiceClient, sseHandler *handler.SSEHandler) {
+func SSERouter(rg *gin.RouterGroup, cfg *config.Config, userClient userpb.UserServiceClient, sseHandler *handler.SSEHandler) {
 	accessName := cfg.Jwt.AccessName
 	secretKey := cfg.Jwt.SecretKey
 

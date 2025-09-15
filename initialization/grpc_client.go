@@ -28,7 +28,7 @@ type GRPCClients struct {
 	chatConn      *grpc.ClientConn
 }
 
-func InitClients(ca *common.ClientAddresses) (*GRPCClients, error) {
+func InitClients(ca common.ClientAddresses) (*GRPCClients, error) {
 	opts := dialOptions()
 	authConn, err := grpc.NewClient(ca.AuthAddr, opts...)
 	if err != nil {

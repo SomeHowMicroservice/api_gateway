@@ -15,10 +15,10 @@ import (
 
 type AuthHandler struct {
 	authClient authpb.AuthServiceClient
-	cfg        *config.AppConfig
+	cfg        *config.Config
 }
 
-func NewAuthHandler(authClient authpb.AuthServiceClient, cfg *config.AppConfig) *AuthHandler {
+func NewAuthHandler(authClient authpb.AuthServiceClient, cfg *config.Config) *AuthHandler {
 	return &AuthHandler{
 		authClient,
 		cfg,

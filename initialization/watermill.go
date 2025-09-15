@@ -13,7 +13,7 @@ type WatermillSubscriber struct {
 	Subscriber message.Subscriber
 }
 
-func InitWatermill(cfg *config.AppConfig, logger watermill.LoggerAdapter, exchangeName string) (*WatermillSubscriber, error) {
+func InitWatermill(cfg *config.Config, logger watermill.LoggerAdapter, exchangeName string) (*WatermillSubscriber, error) {
 	amqpConfig := amqp.NewDurablePubSubConfig(
 		fmt.Sprintf("amqps://%s:%s@%s/%s",
 			cfg.MessageQueue.RUser,

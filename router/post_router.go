@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func PostRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.UserServiceClient, postHandler *handler.PostHandler) {
+func PostRouter(rg *gin.RouterGroup, cfg *config.Config, userClient userpb.UserServiceClient, postHandler *handler.PostHandler) {
 	accessName := cfg.Jwt.AccessName
 	secretKey := cfg.Jwt.SecretKey
 

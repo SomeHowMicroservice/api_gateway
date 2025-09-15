@@ -32,7 +32,7 @@ func RegisterPostImageUploadedConsumer(router *message.Router, subscriber messag
 }
 
 func handleProductImageUploaded(msg *message.Message, sseManager *event.Manager) error {
-	var eventMsg *common.ProductImageUploadedEvent
+	var eventMsg common.ProductImageUploadedEvent
 	if err := json.Unmarshal(msg.Payload, &eventMsg); err != nil {
 		return fmt.Errorf("unmarshal json thất bại: %w", err)
 	}
@@ -42,7 +42,7 @@ func handleProductImageUploaded(msg *message.Message, sseManager *event.Manager)
 		"product_id": eventMsg.ProductID,
 	}
 
-	event := &common.SSEEvent{
+	event := common.SSEEvent{
 		Event: common.ProductImageUploaded,
 		Data:  data,
 	}
@@ -57,7 +57,7 @@ func handleProductImageUploaded(msg *message.Message, sseManager *event.Manager)
 }
 
 func handlePostImageUploaded(msg *message.Message, sseManager *event.Manager) error {
-	var eventMsg *common.PostImageUploadedEvent
+	var eventMsg common.PostImageUploadedEvent
 	if err := json.Unmarshal(msg.Payload, &eventMsg); err != nil {
 		return fmt.Errorf("unmarshal json thất bại: %w", err)
 	}
@@ -67,10 +67,12 @@ func handlePostImageUploaded(msg *message.Message, sseManager *event.Manager) er
 		"post_id": eventMsg.PostID,
 	}
 
-	event := &common.SSEEvent{
+	event := common.SSEEvent{
 		Event: common.PostImageUploaded,
 		Data:  data,
 	}
+
+	fmt.Println(event)
 
 	if eventMsg.UserID == "" || eventMsg.PostID == "" {
 		return nil

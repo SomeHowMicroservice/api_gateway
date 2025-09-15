@@ -27,7 +27,7 @@ var (
 )
 
 type Server struct {
-	cfg        *config.AppConfig
+	cfg        *config.Config
 	httpServer *http.Server
 	clients    *initialization.GRPCClients
 	hub        *socket.Hub
@@ -37,14 +37,14 @@ type Server struct {
 	wmPost     *initialization.WatermillSubscriber
 }
 
-func NewServer(cfg *config.AppConfig) (*Server, error) {
+func NewServer(cfg *config.Config) (*Server, error) {
 	authAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.AuthPort)
 	userAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.UserPort)
 	productAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.ProductPort)
 	postAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.PostPort)
 	chatAddr = fmt.Sprintf("%s:%d", cfg.App.ServerHost, cfg.Services.ChatPort)
 
-	ca := &common.ClientAddresses{
+	ca := common.ClientAddresses{
 		AuthAddr:    authAddr,
 		UserAddr:    userAddr,
 		ProductAddr: productAddr,

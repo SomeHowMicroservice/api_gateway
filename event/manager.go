@@ -60,7 +60,7 @@ func (m *Manager) Run() {
 	}
 }
 
-func (m *Manager) SendToUser(userID string, event *common.SSEEvent) {
+func (m *Manager) SendToUser(userID string, event common.SSEEvent) {
 	data, _ := json.Marshal(event)
 
 	m.Mutex.RLock()

@@ -1,11 +1,32 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"time"
 
-type AppConfig struct {
+	"github.com/spf13/viper"
+)
+
+type Config struct {
 	App struct {
 		ServerHost string `mapstructure:"server_host"`
 		HttpPort   int    `mapstructure:"http_port"`
+		CORS       struct {
+			AllowOrigins        []string      `mapstructure:"allow_origins"`
+			AllowMethods        []string      `mapstructure:"allow_methods"`
+			AllowHeaders        []string      `mapstructure:"allow_headers"`
+			AllowCredentials    bool          `mapstructure:"allow_credentials"`
+			AllowWebSockets     bool          `mapstructure:"allow_websockets"`
+			AllowFiles          bool          `mapstructure:"allow_files"`
+			AllowPrivateNetwork bool          `mapstructure:"allow_private_network"`
+			MaxAge              time.Duration `mapstructure:"max_age"`
+			ExposeHeaders       []string      `mapstructure:"expose_headers"`
+		} `mapstructure:"cors"`
+		Http struct {
+			WriteTimeout   time.Duration `mapstructure:"write_timeout"`
+			ReadTimeout    time.Duration `mapstructure:"read_timeout"`
+			IdleTimeout    time.Duration `mapstructure:"idle_timeout"`
+			MaxHeaderBytes int           `mapstructure:"max_header_bytes"`
+		} `mapstructure:"http"`
 	} `mapstructure:"app"`
 
 	Jwt struct {
@@ -30,7 +51,7 @@ type AppConfig struct {
 	} `mapstructure:"message_queue"`
 }
 
-func LoadConfig() (*AppConfig, error) {
+func LoadConfig() (*Config, error) {
 	viper.SetConfigFile("config/config.yaml")
 	viper.SetConfigType("yaml")
 
@@ -38,7 +59,7 @@ func LoadConfig() (*AppConfig, error) {
 		return nil, err
 	}
 
-	var config AppConfig
+	var config Config
 	if err := viper.Unmarshal(&config); err != nil {
 		return nil, err
 	}

@@ -18,7 +18,7 @@ type Container struct {
 	WSHandler  *handler.WSHandler
 }
 
-func NewContainer(cs *initialization.GRPCClients, cfg *config.AppConfig, hub *socket.Hub, manager *event.Manager) *Container {
+func NewContainer(cs *initialization.GRPCClients, cfg *config.Config, hub *socket.Hub, manager *event.Manager) *Container {
 	auth := NewAuthContainer(cs.AuthClient, cfg)
 	user := NewUserContainer(cs.UserClient)
 	product := NewProductHandler(cs.ProductClient)

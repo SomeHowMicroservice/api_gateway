@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.UserServiceClient, authHandler *handler.AuthHandler) {
+func AuthRouter(rg *gin.RouterGroup, cfg *config.Config, userClient userpb.UserServiceClient, authHandler *handler.AuthHandler) {
 	accessName := cfg.Jwt.AccessName
 	refreshName := cfg.Jwt.RefreshName
 	secretKey := cfg.Jwt.SecretKey

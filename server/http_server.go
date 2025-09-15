@@ -11,10 +11,11 @@ import (
 	"github.com/SomeHowMicroservice/shm-be/gateway/initialization"
 	"github.com/SomeHowMicroservice/shm-be/gateway/router"
 	"github.com/SomeHowMicroservice/shm-be/gateway/socket"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-func NewHttpServer(cfg *config.AppConfig, clients *initialization.GRPCClients, hub *socket.Hub, manager *event.Manager) (*http.Server, error) {
+func NewHttpServer(cfg *config.Config, clients *initialization.GRPCClients, hub *socket.Hub, manager *event.Manager) (*http.Server, error) {
 	appContainer := container.NewContainer(clients, cfg, hub, manager)
 
 	r := gin.Default()
@@ -23,7 +24,19 @@ func NewHttpServer(cfg *config.AppConfig, clients *initialization.GRPCClients, h
 		return nil, fmt.Errorf("thiết lập Proxy thất bại: %w", err)
 	}
 
-	config.CORSConfig(r)
+	corsConfig := cors.Config{
+		AllowOrigins:        cfg.App.CORS.AllowOrigins,
+		AllowMethods:        cfg.App.CORS.AllowMethods,
+		AllowHeaders:        cfg.App.CORS.AllowHeaders,
+		ExposeHeaders:       cfg.App.CORS.ExposeHeaders,
+		AllowCredentials:    cfg.App.CORS.AllowCredentials,
+		AllowWebSockets:     cfg.App.CORS.AllowWebSockets,
+		AllowFiles:          cfg.App.CORS.AllowFiles,
+		AllowPrivateNetwork: cfg.App.CORS.AllowPrivateNetwork,
+		MaxAge:              cfg.App.CORS.MaxAge * time.Hour,
+	}
+
+	r.Use(cors.New(corsConfig))
 
 	api := r.Group("/api/v1")
 	router.AuthRouter(api, cfg, clients.UserClient, appContainer.Auth.Handler)
@@ -39,10 +52,10 @@ func NewHttpServer(cfg *config.AppConfig, clients *initialization.GRPCClients, h
 	httpServer := &http.Server{
 		Addr:           addr,
 		Handler:        r,
-		IdleTimeout:    time.Minute,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   0,
-		MaxHeaderBytes: 1 << 20,
+		IdleTimeout:    cfg.App.Http.IdleTimeout * time.Second,
+		ReadTimeout:    cfg.App.Http.ReadTimeout * time.Second,
+		WriteTimeout:   cfg.App.Http.ReadTimeout * time.Second,
+		MaxHeaderBytes: cfg.App.Http.MaxHeaderBytes * 1024 * 1024,
 	}
 
 	return httpServer, nil

@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func WSRouter(rg *gin.RouterGroup, cfg *config.AppConfig, userClient userpb.UserServiceClient, wsHandler *handler.WSHandler) {
+func WSRouter(rg *gin.RouterGroup, cfg *config.Config, userClient userpb.UserServiceClient, wsHandler *handler.WSHandler) {
 	accessName := cfg.Jwt.AccessName
 	secretKey := cfg.Jwt.SecretKey
 

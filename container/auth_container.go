@@ -1,9 +1,9 @@
 package container
 
 import (
-	"github.com/SomeHowMicroservice/shm-be/gateway/config"
-	"github.com/SomeHowMicroservice/shm-be/gateway/handler"
-	authpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/auth"
+	"github.com/SomeHowMicroservice/gateway/config"
+	"github.com/SomeHowMicroservice/gateway/handler"
+	authpb "github.com/SomeHowMicroservice/gateway/protobuf/auth"
 )
 
 type AuthContainer struct {

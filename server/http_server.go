@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/config"
-	"github.com/SomeHowMicroservice/shm-be/gateway/container"
-	"github.com/SomeHowMicroservice/shm-be/gateway/event"
-	"github.com/SomeHowMicroservice/shm-be/gateway/initialization"
-	"github.com/SomeHowMicroservice/shm-be/gateway/router"
-	"github.com/SomeHowMicroservice/shm-be/gateway/socket"
+	"github.com/SomeHowMicroservice/gateway/config"
+	"github.com/SomeHowMicroservice/gateway/container"
+	"github.com/SomeHowMicroservice/gateway/event"
+	"github.com/SomeHowMicroservice/gateway/initialization"
+	"github.com/SomeHowMicroservice/gateway/router"
+	"github.com/SomeHowMicroservice/gateway/socket"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

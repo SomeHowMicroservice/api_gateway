@@ -1,4 +1,4 @@
-module github.com/SomeHowMicroservice/shm-be/gateway
+module github.com/SomeHowMicroservice/gateway
 
 go 1.23.4
 

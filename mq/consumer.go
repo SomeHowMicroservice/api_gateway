@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/common"
-	"github.com/SomeHowMicroservice/shm-be/gateway/event"
+	"github.com/SomeHowMicroservice/gateway/common"
+	"github.com/SomeHowMicroservice/gateway/event"
 	"github.com/ThreeDotsLabs/watermill/message"
 )
 

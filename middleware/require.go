@@ -7,8 +7,8 @@ import (
 	"slices"
 	"time"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/common"
-	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
+	"github.com/SomeHowMicroservice/gateway/common"
+	userpb "github.com/SomeHowMicroservice/gateway/protobuf/user"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

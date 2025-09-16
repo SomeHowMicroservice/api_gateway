@@ -3,7 +3,7 @@ package middleware
 import (
 	"fmt"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/common"
+	"github.com/SomeHowMicroservice/gateway/common"
 	"github.com/golang-jwt/jwt/v5"
 )
 

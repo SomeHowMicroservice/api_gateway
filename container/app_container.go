@@ -1,11 +1,11 @@
 package container
 
 import (
-	"github.com/SomeHowMicroservice/shm-be/gateway/config"
-	"github.com/SomeHowMicroservice/shm-be/gateway/event"
-	"github.com/SomeHowMicroservice/shm-be/gateway/handler"
-	"github.com/SomeHowMicroservice/shm-be/gateway/initialization"
-	"github.com/SomeHowMicroservice/shm-be/gateway/socket"
+	"github.com/SomeHowMicroservice/gateway/config"
+	"github.com/SomeHowMicroservice/gateway/event"
+	"github.com/SomeHowMicroservice/gateway/handler"
+	"github.com/SomeHowMicroservice/gateway/initialization"
+	"github.com/SomeHowMicroservice/gateway/socket"
 )
 
 type Container struct {

@@ -3,9 +3,9 @@ package handler
 import (
 	"net/http"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/common"
-	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
-	"github.com/SomeHowMicroservice/shm-be/gateway/socket"
+	"github.com/SomeHowMicroservice/gateway/common"
+	userpb "github.com/SomeHowMicroservice/gateway/protobuf/user"
+	"github.com/SomeHowMicroservice/gateway/socket"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )

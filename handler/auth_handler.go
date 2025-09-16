@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/common"
-	"github.com/SomeHowMicroservice/shm-be/gateway/config"
-	authpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/auth"
-	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
-	"github.com/SomeHowMicroservice/shm-be/gateway/request"
+	"github.com/SomeHowMicroservice/gateway/common"
+	"github.com/SomeHowMicroservice/gateway/config"
+	authpb "github.com/SomeHowMicroservice/gateway/protobuf/auth"
+	userpb "github.com/SomeHowMicroservice/gateway/protobuf/user"
+	"github.com/SomeHowMicroservice/gateway/request"
 	"github.com/gin-gonic/gin"
 )
 

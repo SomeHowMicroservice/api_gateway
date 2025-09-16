@@ -1,8 +1,8 @@
 package container
 
 import (
-	"github.com/SomeHowMicroservice/shm-be/gateway/handler"
-	productpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/product"
+	"github.com/SomeHowMicroservice/gateway/handler"
+	productpb "github.com/SomeHowMicroservice/gateway/protobuf/product"
 )
 
 type ProductContainer struct {

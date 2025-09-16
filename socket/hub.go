@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	chatpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/chat"
+	chatpb "github.com/SomeHowMicroservice/gateway/protobuf/chat"
 )
 
 type Hub struct {

@@ -1,10 +1,10 @@
 package router
 
 import (
-	"github.com/SomeHowMicroservice/shm-be/gateway/config"
-	"github.com/SomeHowMicroservice/shm-be/gateway/handler"
-	"github.com/SomeHowMicroservice/shm-be/gateway/middleware"
-	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
+	"github.com/SomeHowMicroservice/gateway/config"
+	"github.com/SomeHowMicroservice/gateway/handler"
+	"github.com/SomeHowMicroservice/gateway/middleware"
+	userpb "github.com/SomeHowMicroservice/gateway/protobuf/user"
 	"github.com/gin-gonic/gin"
 )
 

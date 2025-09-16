@@ -1,8 +1,8 @@
 package container
 
 import (
-	"github.com/SomeHowMicroservice/shm-be/gateway/handler"
-	chatpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/chat"
+	"github.com/SomeHowMicroservice/gateway/handler"
+	chatpb "github.com/SomeHowMicroservice/gateway/protobuf/chat"
 )
 
 type ChatContainer struct {

@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/common"
+	"github.com/SomeHowMicroservice/gateway/common"
 )
 
 type Manager struct {

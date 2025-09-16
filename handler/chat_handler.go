@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/common"
-	chatpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/chat"
-	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
+	"github.com/SomeHowMicroservice/gateway/common"
+	chatpb "github.com/SomeHowMicroservice/gateway/protobuf/chat"
+	userpb "github.com/SomeHowMicroservice/gateway/protobuf/user"
 	"github.com/gin-gonic/gin"
 )
 

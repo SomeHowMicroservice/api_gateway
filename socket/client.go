@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	chatpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/chat"
+	chatpb "github.com/SomeHowMicroservice/gateway/protobuf/chat"
 	"github.com/gorilla/websocket"
 	"google.golang.org/grpc/status"
 )

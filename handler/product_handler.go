@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/common"
-	productpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/product"
-	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
-	"github.com/SomeHowMicroservice/shm-be/gateway/request"
+	"github.com/SomeHowMicroservice/gateway/common"
+	productpb "github.com/SomeHowMicroservice/gateway/protobuf/product"
+	userpb "github.com/SomeHowMicroservice/gateway/protobuf/user"
+	"github.com/SomeHowMicroservice/gateway/request"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )

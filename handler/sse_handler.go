@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/SomeHowMicroservice/shm-be/gateway/event"
-	userpb "github.com/SomeHowMicroservice/shm-be/gateway/protobuf/user"
+	"github.com/SomeHowMicroservice/gateway/event"
+	userpb "github.com/SomeHowMicroservice/gateway/protobuf/user"
 	"github.com/gin-gonic/gin"
 )
 

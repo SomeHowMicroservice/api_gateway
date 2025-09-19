@@ -1942,7 +1942,7 @@ const file_proto_post_proto_rawDesc = "" +
 	"\auser_id\x18\x03 \x01(\tR\x06userIdB\a\n" +
 	"\x05_slug\"!\n" +
 	"\x0fCreatedResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id2\x8d\r\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id2\x96\r\n" +
 	"\vPostService\x12>\n" +
 	"\vCreateTopic\x12\x18.post.CreateTopicRequest\x1a\x15.post.CreatedResponse\x12C\n" +
 	"\x11GetAllTopicsAdmin\x12\x13.post.GetAllRequest\x1a\x19.post.TopicsAdminResponse\x12>\n" +
@@ -1958,9 +1958,9 @@ const file_proto_post_proto_rawDesc = "" +
 	"\x10GetDeletedTopics\x12\x13.post.GetAllRequest\x1a\x19.post.TopicsAdminResponse\x129\n" +
 	"\fGetAllTopics\x12\x13.post.GetAllRequest\x1a\x14.post.TopicsResponse\x12K\n" +
 	"\x10GetAllPostsAdmin\x12\x1d.post.GetAllPostsAdminRequest\x1a\x18.post.PostsAdminResponse\x12B\n" +
-	"\vGetPostById\x12\x13.post.GetOneRequest\x1a\x1e.post.PostAdminDetailsResponse\x12<\n" +
+	"\vGetPostById\x12\x13.post.GetOneRequest\x1a\x1e.post.PostAdminDetailsResponse\x12E\n" +
 	"\n" +
-	"UpdatePost\x12\x17.post.UpdatePostRequest\x1a\x15.post.UpdatedResponse\x12;\n" +
+	"UpdatePost\x12\x17.post.UpdatePostRequest\x1a\x1e.post.PostAdminDetailsResponse\x12;\n" +
 	"\n" +
 	"DeletePost\x12\x16.post.DeleteOneRequest\x1a\x15.post.DeletedResponse\x12=\n" +
 	"\vDeletePosts\x12\x17.post.DeleteManyRequest\x1a\x15.post.DeletedResponse\x12>\n" +
@@ -2068,7 +2068,7 @@ var file_proto_post_proto_depIdxs = []int32{
 	11, // 47: post.PostService.GetAllTopics:output_type -> post.TopicsResponse
 	6,  // 48: post.PostService.GetAllPostsAdmin:output_type -> post.PostsAdminResponse
 	2,  // 49: post.PostService.GetPostById:output_type -> post.PostAdminDetailsResponse
-	21, // 50: post.PostService.UpdatePost:output_type -> post.UpdatedResponse
+	2,  // 50: post.PostService.UpdatePost:output_type -> post.PostAdminDetailsResponse
 	20, // 51: post.PostService.DeletePost:output_type -> post.DeletedResponse
 	20, // 52: post.PostService.DeletePosts:output_type -> post.DeletedResponse
 	14, // 53: post.PostService.RestorePost:output_type -> post.RestoredResponse

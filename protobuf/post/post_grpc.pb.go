@@ -63,7 +63,7 @@ type PostServiceClient interface {
 	GetAllTopics(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*TopicsResponse, error)
 	GetAllPostsAdmin(ctx context.Context, in *GetAllPostsAdminRequest, opts ...grpc.CallOption) (*PostsAdminResponse, error)
 	GetPostById(ctx context.Context, in *GetOneRequest, opts ...grpc.CallOption) (*PostAdminDetailsResponse, error)
-	UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*UpdatedResponse, error)
+	UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*PostAdminDetailsResponse, error)
 	DeletePost(ctx context.Context, in *DeleteOneRequest, opts ...grpc.CallOption) (*DeletedResponse, error)
 	DeletePosts(ctx context.Context, in *DeleteManyRequest, opts ...grpc.CallOption) (*DeletedResponse, error)
 	RestorePost(ctx context.Context, in *RestoreOneRequest, opts ...grpc.CallOption) (*RestoredResponse, error)
@@ -223,9 +223,9 @@ func (c *postServiceClient) GetPostById(ctx context.Context, in *GetOneRequest, 
 	return out, nil
 }
 
-func (c *postServiceClient) UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*UpdatedResponse, error) {
+func (c *postServiceClient) UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*PostAdminDetailsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdatedResponse)
+	out := new(PostAdminDetailsResponse)
 	err := c.cc.Invoke(ctx, PostService_UpdatePost_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -341,7 +341,7 @@ type PostServiceServer interface {
 	GetAllTopics(context.Context, *GetAllRequest) (*TopicsResponse, error)
 	GetAllPostsAdmin(context.Context, *GetAllPostsAdminRequest) (*PostsAdminResponse, error)
 	GetPostById(context.Context, *GetOneRequest) (*PostAdminDetailsResponse, error)
-	UpdatePost(context.Context, *UpdatePostRequest) (*UpdatedResponse, error)
+	UpdatePost(context.Context, *UpdatePostRequest) (*PostAdminDetailsResponse, error)
 	DeletePost(context.Context, *DeleteOneRequest) (*DeletedResponse, error)
 	DeletePosts(context.Context, *DeleteManyRequest) (*DeletedResponse, error)
 	RestorePost(context.Context, *RestoreOneRequest) (*RestoredResponse, error)
@@ -403,7 +403,7 @@ func (UnimplementedPostServiceServer) GetAllPostsAdmin(context.Context, *GetAllP
 func (UnimplementedPostServiceServer) GetPostById(context.Context, *GetOneRequest) (*PostAdminDetailsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPostById not implemented")
 }
-func (UnimplementedPostServiceServer) UpdatePost(context.Context, *UpdatePostRequest) (*UpdatedResponse, error) {
+func (UnimplementedPostServiceServer) UpdatePost(context.Context, *UpdatePostRequest) (*PostAdminDetailsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePost not implemented")
 }
 func (UnimplementedPostServiceServer) DeletePost(context.Context, *DeleteOneRequest) (*DeletedResponse, error) {

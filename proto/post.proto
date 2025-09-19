@@ -32,7 +32,7 @@ service PostService{
 
   rpc GetPostById(GetOneRequest) returns (PostAdminDetailsResponse);
 
-  rpc UpdatePost(UpdatePostRequest) returns (UpdatedResponse);
+  rpc UpdatePost(UpdatePostRequest) returns (PostAdminDetailsResponse);
 
   rpc DeletePost(DeleteOneRequest) returns (DeletedResponse);
 

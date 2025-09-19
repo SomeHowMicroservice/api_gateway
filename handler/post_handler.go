@@ -396,18 +396,21 @@ func (h *PostHandler) UpdatePost(c *gin.Context) {
 		isPublished = *req.IsPublished
 	}
 
-	if _, err := h.postClient.UpdatePost(ctx, &postpb.UpdatePostRequest{
+	res, err := h.postClient.UpdatePost(ctx, &postpb.UpdatePostRequest{
 		Id:          postID,
 		Title:       &title,
 		Content:     &content,
 		TopicId:     &topicID,
 		IsPublished: &isPublished,
 		UserId:      user.Id,
-	}); common.HandleGrpcError(c, err) {
+	}) 
+	if common.HandleGrpcError(c, err) {
 		return
 	}
 
-	common.JSON(c, http.StatusOK, "Chỉnh sửa bài viết thành công", nil)
+	common.JSON(c, http.StatusOK, "Chỉnh sửa bài viết thành công", gin.H{
+		"post": res,
+	})
 }
 
 func (h *PostHandler) DeletePost(c *gin.Context) {

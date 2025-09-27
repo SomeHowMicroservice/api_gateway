@@ -4,7 +4,7 @@ import (
 	"github.com/SomeHowMicroservice/gateway/common"
 	"github.com/SomeHowMicroservice/gateway/config"
 	"github.com/SomeHowMicroservice/gateway/handler"
-	"github.com/SomeHowMicroservice/gateway/middleware"
+	"github.com/SomeHowMicroservice/gateway/security"
 	userpb "github.com/SomeHowMicroservice/gateway/protobuf/user"
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +18,7 @@ func PostRouter(rg *gin.RouterGroup, cfg *config.Config, userClient userpb.UserS
 		topic.GET("", postHandler.GetAllTopics)
 	}
 
-	admin := rg.Group("/admin", middleware.RequireAuth(accessName, secretKey, userClient), middleware.RequireMultiRoles([]string{common.RoleContributor}))
+	admin := rg.Group("/admin", security.RequireAuth(accessName, secretKey, userClient), security.RequireMultiRoles([]string{common.RoleContributor}))
 	{
 		admin.POST("/topics", postHandler.CreateTopic)
 		admin.GET("/topics", postHandler.GetAllTopicsAdmin)

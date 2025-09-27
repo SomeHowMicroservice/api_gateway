@@ -4,7 +4,7 @@ import (
 	"github.com/SomeHowMicroservice/gateway/common"
 	"github.com/SomeHowMicroservice/gateway/config"
 	"github.com/SomeHowMicroservice/gateway/handler"
-	"github.com/SomeHowMicroservice/gateway/middleware"
+	"github.com/SomeHowMicroservice/gateway/security"
 	userpb "github.com/SomeHowMicroservice/gateway/protobuf/user"
 	"github.com/gin-gonic/gin"
 )
@@ -41,7 +41,7 @@ func ProductRouter(rg *gin.RouterGroup, cfg *config.Config, userClient userpb.Us
 		tag.GET("", productHandler.GetAllTags)
 	}
 
-	admin := rg.Group("/admin", middleware.RequireAuth(accessName, secretKey, userClient), middleware.RequireMultiRoles([]string{common.RoleAdmin}))
+	admin := rg.Group("/admin", security.RequireAuth(accessName, secretKey, userClient), security.RequireMultiRoles([]string{common.RoleAdmin}))
 	{
 		admin.POST("/categories", productHandler.CreateCategory)
 		admin.GET("/categories", productHandler.GetAllCategoriesAdmin)

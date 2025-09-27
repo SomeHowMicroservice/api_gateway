@@ -3,7 +3,7 @@ package router
 import (
 	"github.com/SomeHowMicroservice/gateway/config"
 	"github.com/SomeHowMicroservice/gateway/handler"
-	"github.com/SomeHowMicroservice/gateway/middleware"
+	"github.com/SomeHowMicroservice/gateway/security"
 	userpb "github.com/SomeHowMicroservice/gateway/protobuf/user"
 	"github.com/gin-gonic/gin"
 )
@@ -18,10 +18,10 @@ func AuthRouter(rg *gin.RouterGroup, cfg *config.Config, userClient userpb.UserS
 		auth.POST("/sign-up", authHandler.SignUp)
 		auth.POST("/sign-up/verify", authHandler.VerifySignUp)
 		auth.POST("/sign-in", authHandler.SignIn)
-		auth.POST("/sign-out", middleware.RequireAuth(accessName, secretKey, userClient), authHandler.SignOut)
-		auth.GET("/me", middleware.RequireAuth(accessName, secretKey, userClient), authHandler.GetMe)
-		auth.POST("/refresh", middleware.RequireRefreshToken(refreshName, secretKey, userClient), authHandler.RefreshToken)
-		auth.POST("/change-password", middleware.RequireAuth(accessName, secretKey, userClient), authHandler.ChangePassword)
+		auth.POST("/sign-out", security.RequireAuth(accessName, secretKey, userClient), authHandler.SignOut)
+		auth.GET("/me", security.RequireAuth(accessName, secretKey, userClient), authHandler.GetMe)
+		auth.POST("/refresh", security.RequireRefreshToken(refreshName, secretKey, userClient), authHandler.RefreshToken)
+		auth.POST("/change-password", security.RequireAuth(accessName, secretKey, userClient), authHandler.ChangePassword)
 		auth.POST("/forgot-password", authHandler.ForgotPassword)
 		auth.POST("/forgot-password/verify", authHandler.VerifyForgotPassword)
 		auth.POST("/reset-password", authHandler.ResetPassword)

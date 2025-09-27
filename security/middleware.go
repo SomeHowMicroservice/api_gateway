@@ -1,4 +1,4 @@
-package middleware
+package security
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func RequireRefreshToken(refreshName string, secretKey string, userClient userpb.UserServiceClient) gin.HandlerFunc {
+func RequireRefreshToken(refreshName, secretKey string, userClient userpb.UserServiceClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenStr, err := c.Cookie(refreshName)
 		if err != nil {
@@ -72,7 +72,7 @@ func RequireRefreshToken(refreshName string, secretKey string, userClient userpb
 	}
 }
 
-func RequireAuth(accessName string, secretKey string, userClient userpb.UserServiceClient) gin.HandlerFunc {
+func RequireAuth(accessName, secretKey string, userClient userpb.UserServiceClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenStr, err := c.Cookie(accessName)
 		if err != nil {
@@ -135,7 +135,7 @@ func RequireAuth(accessName string, secretKey string, userClient userpb.UserServ
 	}
 }
 
-func OptionalAuth(accessName string, secretKey string, userClient userpb.UserServiceClient) gin.HandlerFunc {
+func OptionalAuth(accessName, secretKey string, userClient userpb.UserServiceClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenStr, err := c.Cookie(accessName)
 		if err != nil || tokenStr == "" {

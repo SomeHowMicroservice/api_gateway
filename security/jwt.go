@@ -1,4 +1,4 @@
-package middleware
+package security
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func ParseToken(tokenStr string, secretKey string) (jwt.MapClaims, error) {
+func ParseToken(tokenStr, secretKey string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("phương thức ký không hợp lệ: %v", t.Header["alg"])

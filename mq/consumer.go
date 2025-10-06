@@ -72,8 +72,6 @@ func handlePostImageUploaded(msg *message.Message, sseManager *event.Manager) er
 		Data:  data,
 	}
 
-	fmt.Println(event)
-
 	if eventMsg.UserID == "" || eventMsg.PostID == "" {
 		return nil
 	}
